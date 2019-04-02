@@ -47,6 +47,8 @@ class PolicyEmergenceSM(Model):
 		self.policy_implemented_number = None
 		self.policy_formulation_run = False  # True if an agenda is found
 
+		self.w_el_influence = 0.05  # electorate influence weight
+
 		self.schedule = RandomActivation(self)
 		self.grid = SingleGrid(height, width, torus=True)
 
@@ -126,12 +128,8 @@ class PolicyEmergenceSM(Model):
 		self.KPIs = KPIs
 
 		# 0.
-		self.module_interface_input(self.KPIs)
-
-		'''
-		TO DO:
-		- Introduce the transfer of information between the external parties and the truth agent relates to the policy impacts
-		'''
+		self.module_interface_input(self.KPIs)  # transfer of the states
+		self.electorate_influence(self.w_el_influence)  # electorate influence action		
 
 		# 1.
 		self.agenda_setting()
@@ -165,8 +163,6 @@ class PolicyEmergenceSM(Model):
 		'''
 		The module interface input step consists of actions related to the module interface and the policy emergence model
 
-		Missing:
-		- Electorate actions
 		'''
 
 		# selection of the Truth agent policy tree and issue tree
@@ -193,6 +189,17 @@ class PolicyEmergenceSM(Model):
 				for issue in range(self.len_DC+self.len_PC+self.len_S):
 					agent.issuetree[agent.unique_id][issue][0] = truth_issuetree[issue]
 				self.preference_update(agent, agent.unique_id)
+
+	def electorate_influence(self, w_el_influence):
+
+		'''
+		This function calls the influence actions in the electorate agent class
+
+		'''
+
+		for agent in self.schedule.agent_buffer(shuffled=True):  
+			if isinstance(agent, ElectorateAgent):
+				agent.electorate_influence(w_el_influence)
 
 	def agenda_setting(self):
 

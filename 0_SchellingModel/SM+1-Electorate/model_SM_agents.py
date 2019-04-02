@@ -263,6 +263,25 @@ class ElectorateAgent(Agent):
         self.issuetree_elec = issuetree_elec  # issue tree of the agent (including partial issue of other agents)
         self.representativeness = representativeness
 
+    def electorate_influence(self, w_el_influence):
+
+        '''
+        This function performs the electorate influence actions on the policy makers
+        Go_{PM,n,i} := Go_{PM,n,i} + \left( Go_{El,n} - Go_{PM,n,i} \right) \cdot W \cdot \left| Go_{PM,n,i} - Be_{PM,n,i} 
+        '''
+
+        len_DC = self.model.len_DC
+        len_PC = self.model.len_PC
+        len_S = self.model.len_S
+
+        for agent in self.model.schedule.agent_buffer(shuffled=True):
+            if isinstance(agent, ActiveAgent) and agent.agent_type  == 'policymaker':
+                _unique_id = agent.unique_id
+                for issue in range(len_DC + len_PC + len_S):
+                    # print('Before change, issue', issue, ':', agent.issuetree[_unique_id][issue][1])
+                    agent.issuetree[_unique_id][issue][1] += (self.issuetree_elec[issue] - agent.issuetree[_unique_id][issue][1]) * w_el_influence * abs(agent.issuetree[_unique_id][issue][1] - agent.issuetree[_unique_id][issue][0])
+                    # print('After change, issue', issue, ':', agent.issuetree[_unique_id][issue][1])
+
 class TruthAgent(Agent):
     '''
     Truth agents.
