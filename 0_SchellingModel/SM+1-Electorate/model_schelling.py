@@ -3,6 +3,8 @@ from mesa.time import RandomActivation
 from mesa.space import SingleGrid
 from mesa.datacollection import DataCollector
 
+import random
+
 '''
 Optional for coupling of the Schelling model
 - Migration
@@ -171,8 +173,8 @@ class Schelling(Model):
         for cell in self.grid.coord_iter():
             x = cell[1]
             y = cell[2]
-            if self.random.random() < self.density:
-                if self.random.random() < self.minority_pc:
+            if random.random() < self.density:
+                if random.random() < self.minority_pc:
                     agent_type = 1
                 else:
                     agent_type = 0
