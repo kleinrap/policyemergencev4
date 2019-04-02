@@ -179,7 +179,7 @@ class Schelling(Model):
                 else:
                     agent_type = 0
 
-                last_move = round(self.random.random()*10)  # randomly assign a value from 0 to 10
+                last_move = round(random.random()*10)  # randomly assign a value from 0 to 10
                 agent = SchellingAgent((x, y), self, agent_type, last_move)
                 self.grid.position_agent(agent, (x, y))
                 self.schedule.add(agent)
