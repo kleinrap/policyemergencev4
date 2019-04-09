@@ -16,7 +16,7 @@ The architecture present here is to be used for performing experiments. A batch 
 
 # model version
 # 0 - SM, 1 - SM+1 electorate, 2 - SM+2 actions, 3 - SM+3 networks, 4 - SM+4 bounded, 5 - SM+5 coalitions
-SM_version = 1
+SM_version = 2
 
 # batch run parameters
 repetitions_runs = 5

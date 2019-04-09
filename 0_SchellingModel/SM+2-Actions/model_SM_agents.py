@@ -30,6 +30,16 @@ class ActiveAgent(Agent):
         self.selected_S = None
         self.selected_PI = None
 
+    def preference_update(self, agent, who):
+
+        self.model.preference_update_DC(agent, who)
+
+        self.model.preference_update_PC(agent, who)
+
+        self.model.preference_update_S(agent, who)
+
+        self.model.preference_update_PF(agent, who)
+
     def selection_PC(self):
 
         '''
@@ -55,78 +65,13 @@ class ActiveAgent(Agent):
         This function is used to select the preferred policy family. First the preferences are calculated. Then the policy family preferred is selected as the policy family with the lowest preference (this means the smallest gap after the introduction of the policy family likelihood).
         '''
 
-        len_DC = self.model.len_DC
-        len_PF = self.model.len_PC  # number of PC is always equal to number of PF
         len_PC = self.model.len_PC
-        len_S = self.model.len_S
-
-        # calculation of the preferences for all policy families
-        # calculation of the denominator
-        PF_denominator = 0
-        # going through all policy families
-        for PFj in range(len_PF):
-            # going through all policy core issues
-            for PCi in range(len_PC):
-                gap = 0
-                # print(" ")
-                # print(PFj, PCi)
-                # print(self.policytree[self.unique_id][PFj])
-                # print(self.policytree[self.unique_id][PFj][PCi])
-                # check if the likelihood is positive
-                if self.policytree[self.unique_id][PFj][PCi] > 0:
-                    # calculating the gap
-                    # gap = self.issuetree[self.unique_id][len_DC+PCi][1] - self.issuetree[self.unique_id][len_DC+PCi][0]
-                    # print("Before: ", gap)
-                    gap = abs(self.issuetree[self.unique_id][len_DC+PCi][1] - (self.issuetree[self.unique_id][len_DC+PCi][0] * (1 + self.policytree[self.unique_id][PFj][PCi])))
-                    # print("After: ", gap)
-                # check if the likelihood is negative
-                if self.policytree[self.unique_id][PFj][PCi] < 0:
-                    # gap = self.issuetree[self.unique_id][len_DC+PCi][1] - self.issuetree[self.unique_id][len_DC+PCi][0]
-                    # print("Before: ", gap)
-                    # calculating the gap
-                    gap = abs(self.issuetree[self.unique_id][len_DC+PCi][1] - (self.issuetree[self.unique_id][len_DC+PCi][0] * abs(self.policytree[self.unique_id][PFj][PCi])))
-                    # print("After: ", gap)
-                PF_denominator += round(gap,3)
-                # print("PF_denominator: ", PF_denominator)
-
-        # calculation of the numerator
-        # going through all policy families
-        for PFj in range(len_PF):
-            PF_numerator = 0
-            # going through all policy core issues
-            for PCi in range(len_PC):
-                gap = 0
-                # print(" ")
-                # print(PFj, PCi)
-                # print(self.policytree[self.unique_id][PFj])
-                # print(self.policytree[self.unique_id][PFj][PCi])
-                # check if the likelihood is positive
-                if self.policytree[self.unique_id][PFj][PCi] > 0:
-                    # calculating the gap
-                    # gap = self.issuetree[self.unique_id][len_DC+PCi][1] - self.issuetree[self.unique_id][len_DC+PCi][0]
-                    # print("Before: ", gap)
-                    gap = abs(self.issuetree[self.unique_id][len_DC+PCi][1] - (self.issuetree[self.unique_id][len_DC+PCi][0] * (1 + self.policytree[self.unique_id][PFj][PCi])))
-                    # print("After: ", gap)
-                # check if the likelihood is negative
-                if self.policytree[self.unique_id][PFj][PCi] < 0:
-                    # gap = self.issuetree[self.unique_id][len_DC+PCi][1] - self.issuetree[self.unique_id][len_DC+PCi][0]
-                    # print("Before: ", gap)
-                    # calculating the gap
-                    gap = abs(self.issuetree[self.unique_id][len_DC+PCi][1] - (self.issuetree[self.unique_id][len_DC+PCi][0] * abs(self.policytree[self.unique_id][PFj][PCi])))
-                    # print("After: ", gap)
-                PF_numerator += round(gap,3)
-            if PF_denominator != 0:
-                self.policytree[self.unique_id][PFj][len_PC] = round(PF_numerator/PF_denominator,3)
-            else:
-                self.policytree[self.unique_id][PFj][len_PC] = 0
-        #     print(self.issuetree[self.unique_id][PFj])
-        # print(self.issuetree[self.unique_id])
 
         # selection of the preferred policy family
         # compiling all the preferences
         PF_pref_list = [None for k in range(len_PC)]
         for i in range(len_PC):
-            PF_pref_list[i] = self.policytree[self.unique_id][i][len_PC]
+            PF_pref_list[i] = self.policytree[self.unique_id][0][i][len_PC]
 
         # assigning the lowest preference as the selected policy family by the agent
         self.selected_PF = PF_pref_list.index(min(PF_pref_list))
@@ -167,80 +112,16 @@ class ActiveAgent(Agent):
         This function is used to select the preferred policy instrument from the policy family on the agenda. First the preferences are calculated. Then the policy family preferred is selected as the policy family with the lowest preference (this means the smallest gap after the introduction of the policy family likelihood).
         '''
 
-        len_DC = self.model.len_DC
-        len_PF = self.model.len_PC  # number of PC is always equal to number of PF
-        len_PC = self.model.len_PC
         len_S = self.model.len_S
 
         # selecting the policy instrument from the policy family on the agenda
         PFIns_indices = self.model.PF_indices[self.model.agenda_PF]
 
-        # calculation of the preferences for all policy instruments
-        # calculation of the denominator
-        PI_denominator = 0
-        # going through all policy instruments
-        for PIj in range(len(PFIns_indices)):
-            # going through all secondary issues
-            for Si in range(len_S):
-                # print(" ")
-                # print(PIj, Si)
-                # print(self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]])
-                # print(self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si])
-                # check if the likelihood is positive
-                gap = 0
-                if self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si] > 0:
-                    # calculating the gap
-                    # gap = self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - self.issuetree[self.unique_id][len_DC+len_PC+Si][0]
-                    # print("Before: ", self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - self.issuetree[self.unique_id][len_DC+len_PC+Si][0], self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si])
-                    gap = abs(self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - (self.issuetree[self.unique_id][len_DC+len_PC+Si][0] * (1 + self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si])))
-                    # print("After: ", gap)
-                # check if the likelihood is negative
-                if self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si] < 0:
-                    # gap = self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - self.issuetree[self.unique_id][len_DC+len_PC+Si][0]
-                    # print("Before: ", self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - self.issuetree[self.unique_id][len_DC+len_PC+Si][0], self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si])
-                    # calculating the gap
-                    gap = abs(self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - (self.issuetree[self.unique_id][len_DC+len_PC+Si][0] * abs(self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si])))
-                    # print("After: ", gap)
-                PI_denominator += round(gap,3)
-                # print("PI_denominator: ", PI_denominator)
-
-        # calculation of the numerator
-        # going through all policy instruments
-        for PIj in range(len(PFIns_indices)):
-            PI_numerator = 0
-            # going through all secondary issues
-            for Si in range(len_S):
-                # print(" ")
-                # print(PIj, Si)
-                # print(self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]])
-                # print(self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si])
-                # check if the impact is positive
-                if self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si] > 0:
-                    # calculating the gap
-                    # gap = self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - self.issuetree[self.unique_id][len_DC+len_PC+Si][0]
-                    # print("Before: ", gap)
-                    gap = abs(self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - (self.issuetree[self.unique_id][len_DC+len_PC+Si][0] * (1 + self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si])))
-                    # print("After: ", gap)
-                # check if the likelihood is negative
-                if self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si] < 0:
-                    # gap = self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - self.issuetree[self.unique_id][len_DC+len_PC+Si][0]
-                    # print("Before: ", gap)
-                    # calculating the gap
-                    gap = abs(self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - (self.issuetree[self.unique_id][len_DC+len_PC+Si][0] * abs(self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si])))
-                    # print("After: ", gap)
-                PI_numerator += round(gap,3)
-            if PI_denominator != 0:
-                self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][len_S] = round(PI_numerator/PI_denominator,3)
-            else:
-                self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][len_S] = 0
-            # print(self.issuetree[self.unique_id][PFj])
-        # print(self.policytree[self.unique_id])
-
         # selection of the preferred policy instrument
         # compiling all the preferences
         PI_pref_list = [None for k in range(len(PFIns_indices))]
         for i in range(len(PFIns_indices)):
-            PI_pref_list[i] = self.policytree[self.unique_id][len_PF + PFIns_indices[i]][len_S]
+            PI_pref_list[i] = self.policytree[self.unique_id][1][PFIns_indices[i]][len_S]
 
         # assigning the lowest preference as the selected policy instrument by the agent
         self.selected_PI = PI_pref_list.index(min(PI_pref_list))
@@ -249,6 +130,9 @@ class ActiveAgent(Agent):
         self.selected_PI = self.model.PF_indices[self.model.agenda_PF][self.selected_PI]
         # print("Policy instrument selected: ",self.selected_PI)
 
+    def update_conflictLevels(self):
+
+        pass
 
 class ElectorateAgent(Agent):
     '''

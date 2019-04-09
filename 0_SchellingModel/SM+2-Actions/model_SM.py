@@ -136,9 +136,9 @@ class PolicyEmergenceSM(Model):
 		self.agenda_setting()
 
 		# 2.
-		if self.policy_formulation_run:
+		if self.policy_formulation_run:  # making sure first that an agenda has been created
 			self.policy_formulation()
-		else:
+		else:  # otherwise, the status quo remains
 			self.policy_implemented = self.policy_instruments[-1]
 
 		# 3.
@@ -180,16 +180,18 @@ class PolicyEmergenceSM(Model):
 				# replacing the policy family likelihoods
 				for PFj in range(self.len_PC):
 					for PFij in range(self.len_PC):
-						agent.policytree[agent.unique_id][PFj][PFij] = truth_policytree[PFj][PFij]
+						# agent.policytree[agent.unique_id][PFj][PFij] = truth_policytree[PFj][PFij]
+						agent.policytree[agent.unique_id][0][PFj][PFij] = truth_policytree[PFj][PFij]
 
 				# replacing the policy instruments impacts
 				for insj in range(self.len_ins_1 + self.len_ins_2 + self.len_ins_all):
-					agent.policytree[agent.unique_id][self.len_PC+insj][0:self.len_S] = truth_policytree[self.len_PC+insj]
+					# agent.policytree[agent.unique_id][self.len_PC+insj][0:self.len_S] = truth_policytree[self.len_PC+insj]
+					agent.policytree[agent.unique_id][1][insj][0:self.len_S] = truth_policytree[self.len_PC+insj]
 
 				# replacing the issue beliefs from the KPIs
 				for issue in range(self.len_DC+self.len_PC+self.len_S):
 					agent.issuetree[agent.unique_id][issue][0] = truth_issuetree[issue]
-				self.preference_update(agent, agent.unique_id)
+				agent.preference_update(agent, agent.unique_id)
 
 	def electorate_influence(self, w_el_influence):
 
@@ -289,6 +291,7 @@ class PolicyEmergenceSM(Model):
 		for agent in self.schedule.agent_buffer(shuffled=False):
 			if isinstance(agent, ActiveAgent):  # considering only active agents
 				agent.selection_S()
+				self.preference_update_PI(agent, agent.unique_id)  # update of the preferences
 				agent.selection_PI()
 
 		# 3.
@@ -296,6 +299,7 @@ class PolicyEmergenceSM(Model):
 		# 4. & 5.
 		for agent in self.schedule.agent_buffer(shuffled=False):
 			if isinstance(agent, ActiveAgent):  # considering only active agents
+				self.preference_update_PI(agent, agent.unique_id)  # update of the preferences
 				agent.selection_PI()
 
 		# 6. 
@@ -327,13 +331,13 @@ class PolicyEmergenceSM(Model):
 
 		print("Module interface output not introduced yet")
 
-	def preference_update(self, agent, who):
+	# def preference_update(self, agent, who):
 
-		self.preference_update_DC(agent, who)
+	# 	self.preference_update_DC(agent, who)
 
-		self.preference_update_PC(agent, who)
+	# 	self.preference_update_PC(agent, who)
 
-		self.preference_update_S(agent, who)
+	# 	self.preference_update_S(agent, who)
 
 	def preference_update_DC(self, agent, who):
 
@@ -554,3 +558,165 @@ class PolicyEmergenceSM(Model):
 			# print('The new preference of the policy core PC' + str(j+1) + ' is: ' + str(agent.issuetree[0][len_DC+j][2]))
 			else:
 				agent.issuetree[who][len_DC+len_PC+j][2] = 0
+
+	def preference_update_PF(self, agent, who):
+
+		"""
+		The preference update function (PF)
+		===========================
+
+		This function is used to update the preferences of policy families the agents in their
+		respective policy trees.
+
+		agent - this is the owner of the policy tree
+		who - this is the part of the policytree that is considered - agent.unique_id should be used for this - this is done to also include partial knowledge preference calculation
+
+		"""	
+
+		len_DC = self.len_DC
+		len_PF = self.len_PC  # number of PC is always equal to number of PF
+		len_PC = self.len_PC
+		len_S = self.len_S
+
+		# calculation of the preferences for all policy families
+		# calculation of the denominator
+		PF_denominator = 0
+		# going through all policy families
+		for PFj in range(len_PF):
+			# going through all policy core issues
+			for PCi in range(len_PC):
+				gap = 0
+				# print(" ")
+				# print(PFj, PCi)
+				# print(agent.policytree[who][0][PFj])
+				# print(agent.policytree[who][0][PFj][PCi])
+				# check if the likelihood is positive
+				if agent.policytree[who][0][PFj][PCi] > 0:
+					# calculating the gap
+					# gap = agent.issuetree[who][len_DC+PCi][1] - agent.issuetree[who][len_DC+PCi][0]
+					# print("Before: ", gap)
+					gap = abs(agent.issuetree[who][len_DC+PCi][1] - (agent.issuetree[who][len_DC+PCi][0] * (1 + agent.policytree[who][0][PFj][PCi])))
+					# print("After: ", gap)
+				# check if the likelihood is negative
+				if agent.policytree[who][0][PFj][PCi] < 0:
+					# gap = agent.issuetree[who][len_DC+PCi][1] - agent.issuetree[who][len_DC+PCi][0]
+					# print("Before: ", gap)
+					# calculating the gap
+					gap = abs(agent.issuetree[who][len_DC+PCi][1] - (agent.issuetree[who][len_DC+PCi][0] * abs(agent.policytree[who][0][PFj][PCi])))
+					# print("After: ", gap)
+				PF_denominator += round(gap,3)
+				# print("PF_denominator: ", PF_denominator)
+
+		# calculation of the numerator
+		# going through all policy families
+		for PFj in range(len_PF):
+			PF_numerator = 0
+			# going through all policy core issues
+			for PCi in range(len_PC):
+				gap = 0
+				# print(" ")
+				# print(PFj, PCi)
+				# print(agent.policytree[who][0][PFj])
+				# print(agent.policytree[who][0][PFj][PCi])
+				# check if the likelihood is positive
+				if agent.policytree[who][0][PFj][PCi] > 0:
+					# calculating the gap
+					# gap = agent.issuetree[who][len_DC+PCi][1] - agent.issuetree[who][len_DC+PCi][0]
+					# print("Before: ", gap)
+					gap = abs(agent.issuetree[who][len_DC+PCi][1] - (agent.issuetree[who][len_DC+PCi][0] * (1 + agent.policytree[who][0][PFj][PCi])))
+					# print("After: ", gap)
+				# check if the likelihood is negative
+				if agent.policytree[who][0][PFj][PCi] < 0:
+					# gap = agent.issuetree[who][len_DC+PCi][1] - agent.issuetree[who][len_DC+PCi][0]
+					# print("Before: ", gap)
+					# calculating the gap
+					gap = abs(agent.issuetree[who][len_DC+PCi][1] - (agent.issuetree[who][len_DC+PCi][0] * abs(agent.policytree[who][0][PFj][PCi])))
+					# print("After: ", gap)
+				PF_numerator += round(gap,3)
+			if PF_denominator != 0:
+				agent.policytree[who][0][PFj][len_PC] = round(PF_numerator/PF_denominator,3)
+			else:
+				agent.policytree[who][0][PFj][len_PC] = 0
+
+	def preference_update_PI(self, agent, who):
+
+		"""
+		The preference update function (PI)
+		===========================
+
+		This function is used to update the preferences of policy instruments the agents in their
+		respective policy trees.
+
+		agent - this is the owner of the policy tree
+		who - this is the part of the policytree that is considered - agent.unique_id should be used for this - this is done to also include partial knowledge preference calculation
+
+		"""	
+
+		len_DC = self.len_DC
+		len_PF = self.len_PC  # number of PC is always equal to number of PF
+		len_PC = self.len_PC
+		len_S = self.len_S
+
+		# selecting the policy instrument from the policy family on the agenda
+		PFIns_indices = self.PF_indices[self.agenda_PF]
+
+		# calculation of the preferences for all policy instruments
+		# calculation of the denominator
+		PI_denominator = 0
+		# going through all policy instruments
+		for PIj in range(len(PFIns_indices)):
+			# going through all secondary issues
+			for Si in range(len_S):
+				# print(" ")
+				# print(PIj, Si)
+				# print(agent.policytree[who][1][PFIns_indices[PIj]])
+				# print(agent.policytree[who][1][PFIns_indices[PIj]][Si])
+				# check if the likelihood is positive
+				gap = 0
+				if agent.policytree[who][1][PFIns_indices[PIj]][Si] > 0:
+					# calculating the gap
+					# gap = agent.issuetree[who][len_DC+len_PC+Si][1] - agent.issuetree[who][len_DC+len_PC+Si][0]
+					# print("Before: ", agent.issuetree[who][len_DC+len_PC+Si][1] - agent.issuetree[who][len_DC+len_PC+Si][0], agent.policytree[who][1][PFIns_indices[PIj]][Si])
+					gap = abs(agent.issuetree[who][len_DC+len_PC+Si][1] - (agent.issuetree[who][len_DC+len_PC+Si][0] * (1 + agent.policytree[who][1][PFIns_indices[PIj]][Si])))
+					# print("After: ", gap)
+				# check if the likelihood is negative
+				if agent.policytree[who][1][PFIns_indices[PIj]][Si] < 0:
+					# gap = agent.issuetree[who][len_DC+len_PC+Si][1] - agent.issuetree[who][len_DC+len_PC+Si][0]
+					# print("Before: ", agent.issuetree[who][len_DC+len_PC+Si][1] - agent.issuetree[who][len_DC+len_PC+Si][0], agent.policytree[who][1][PFIns_indices[PIj]][Si])
+					# calculating the gap
+					gap = abs(agent.issuetree[who][len_DC + len_PC + Si][1] - (agent.issuetree[who][len_DC+len_PC+Si][0] * abs(agent.policytree[who][1][PFIns_indices[PIj]][Si])))
+					# print("After: ", gap)
+				PI_denominator += round(gap,3)
+				# print("PI_denominator: ", PI_denominator)
+
+		# calculation of the numerator
+		# going through all policy instruments
+		for PIj in range(len(PFIns_indices)):
+			PI_numerator = 0
+			# going through all secondary issues
+			for Si in range(len_S):
+				# print(" ")
+				# print(PIj, Si)
+				# print(agent.policytree[who][1][PFIns_indices[PIj]])
+				# print(agent.policytree[who][1][PFIns_indices[PIj]][Si])
+				# check if the impact is positive
+				if agent.policytree[who][1][PFIns_indices[PIj]][Si] > 0:
+					# calculating the gap
+					# gap = agent.issuetree[who][len_DC+len_PC+Si][1] - agent.issuetree[who][len_DC+len_PC+Si][0]
+					# print("Before: ", gap)
+					gap = abs(agent.issuetree[who][len_DC+len_PC+Si][1] - (agent.issuetree[who][len_DC+len_PC+Si][0] * (1 + agent.policytree[who][1][PFIns_indices[PIj]][Si])))
+					# print("After: ", gap)
+				# check if the likelihood is negative
+				if agent.policytree[who][1][PFIns_indices[PIj]][Si] < 0:
+					# gap = agent.issuetree[who][len_DC+len_PC+Si][1] - agent.issuetree[who][len_DC+len_PC+Si][0]
+					# print("Before: ", gap)
+					# calculating the gap
+					gap = abs(agent.issuetree[who][len_DC+len_PC+Si][1] - (agent.issuetree[who][len_DC+len_PC+Si][0] * abs(agent.policytree[who][1][PFIns_indices[PIj]][Si])))
+					# print("After: ", gap)
+				PI_numerator += round(gap,3)
+			if PI_denominator != 0:
+				agent.policytree[who][1][PFIns_indices[PIj]][len_S] = round(PI_numerator/PI_denominator,3)
+			else:
+				agent.policytree[who][1][PFIns_indices[PIj]][len_S] = 0
+			# print(agent.issuetree[who][PFj])
+		# print(agent.policytree[who][1])
