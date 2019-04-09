@@ -115,7 +115,10 @@ class ActiveAgent(Agent):
                     gap = abs(self.issuetree[self.unique_id][len_DC+PCi][1] - (self.issuetree[self.unique_id][len_DC+PCi][0] * abs(self.policytree[self.unique_id][PFj][PCi])))
                     # print("After: ", gap)
                 PF_numerator += round(gap,3)
-            self.policytree[self.unique_id][PFj][len_PC] = round(PF_numerator/PF_denominator,3)
+            if PF_denominator != 0:
+                self.policytree[self.unique_id][PFj][len_PC] = round(PF_numerator/PF_denominator,3)
+            else:
+                self.policytree[self.unique_id][PFj][len_PC] = 0
         #     print(self.issuetree[self.unique_id][PFj])
         # print(self.issuetree[self.unique_id])
 
@@ -226,7 +229,10 @@ class ActiveAgent(Agent):
                     gap = abs(self.issuetree[self.unique_id][len_DC+len_PC+Si][1] - (self.issuetree[self.unique_id][len_DC+len_PC+Si][0] * abs(self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][Si])))
                     # print("After: ", gap)
                 PI_numerator += round(gap,3)
-            self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][len_S] = round(PI_numerator/PI_denominator,3)
+            if PI_denominator != 0:
+                self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][len_S] = round(PI_numerator/PI_denominator,3)
+            else:
+                self.policytree[self.unique_id][len_PF + PFIns_indices[PIj]][len_S] = 0
             # print(self.issuetree[self.unique_id][PFj])
         # print(self.policytree[self.unique_id])
 
@@ -266,21 +272,24 @@ class ElectorateAgent(Agent):
     def electorate_influence(self, w_el_influence):
 
         '''
-        This function performs the electorate influence actions on the policy makers
-        Go_{PM,n,i} := Go_{PM,n,i} + \left( Go_{El,n} - Go_{PM,n,i} \right) \cdot W \cdot \left| Go_{PM,n,i} - Be_{PM,n,i} 
+        Function that defines the electorate influence on the policy makers
         '''
 
         len_DC = self.model.len_DC
         len_PC = self.model.len_PC
         len_S = self.model.len_S
 
-        for agent in self.model.schedule.agent_buffer(shuffled=True):
-            if isinstance(agent, ActiveAgent) and agent.agent_type  == 'policymaker':
+        for agent in self.model.schedule.agent_buffer(shuffled=True):  
+            if isinstance(agent, ActiveAgent) and agent.agent_type == 'policymaker' and agent.affiliation == self.affiliation:
                 _unique_id = agent.unique_id
-                for issue in range(len_DC + len_PC + len_S):
-                    # print('Before change, issue', issue, ':', agent.issuetree[_unique_id][issue][1])
+                print(agent.affiliation, agent.agent_type, agent)
+                for issue in range(len_DC+len_PC+len_S):
+                    print()
                     agent.issuetree[_unique_id][issue][1] += (self.issuetree_elec[issue] - agent.issuetree[_unique_id][issue][1]) * w_el_influence * abs(agent.issuetree[_unique_id][issue][1] - agent.issuetree[_unique_id][issue][0])
-                    # print('After change, issue', issue, ':', agent.issuetree[_unique_id][issue][1])
+
+
+        # GoPM,n,i :=GoPM,n,i+(GoEl,n −GoPM,n,i)·W·|GoPM,n,i −BePM,n,i|
+
 
 class TruthAgent(Agent):
     '''

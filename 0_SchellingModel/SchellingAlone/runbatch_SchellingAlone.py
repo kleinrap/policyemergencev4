@@ -14,16 +14,12 @@ from model_SM_agents import TruthAgent
 The architecture present here is to be used for performing experiments. A batch runner algorithm will be used such that a set of experiments can be run at the same time.
 '''
 
-# model version
-# 0 - SM, 1 - SM+1 electorate, 2 - SM+2 actions, 3 - SM+3 networks, 4 - SM+4 bounded, 5 - SM+5 coalitions
-SM_version = 1
-
 # batch run parameters
-repetitions_runs = 5
+repetitions_runs = 50
 exp_number = 0
 
 # running parameters
-total_ticks = 15
+total_ticks = 155
 interval_tick = 5
 run_tick = int(total_ticks/interval_tick)
 warmup_tick = interval_tick
@@ -78,27 +74,29 @@ for i_runs in range(repetitions_runs):
 		print("************************")
 		print("Tick number: ", i)
 
-		# warm up time
-		# this is also used as a warmup time
-		if i == 0:
-			policy_chosen = [None for ite in range(len(model_run_SM.policy_instruments[0]))]
-			for warmup_time in range(warmup_tick):
-				IssueInit, type0agents, type1agents = model_run_schelling.step(policy_chosen)
+		policy_chosen = [None for ite in range(len(model_run_SM.policy_instruments[0]))]
 
-		# policy impact evaluation
-		policy_impact_evaluation(model_run_SM, model_run_schelling, IssueInit, interval_tick)
+		# # warm up time
+		# # this is also used as a warmup time
+		# if i == 0:
+		# 	policy_chosen = [None for ite in range(len(model_run_SM.policy_instruments[0]))]
+		# 	for warmup_time in range(warmup_tick):
+		# 		IssueInit, type0agents, type1agents = model_run_schelling.step(policy_chosen)
 
-		# running the policy emergence model
-		if i == 0:
-			KPIs = issue_mapping(IssueInit, type0agents, type1agents)
-		else:
-			KPIs = issue_mapping(KPIs, type0agents, type1agents)
-		policy_chosen = model_run_SM.step(SM_version, KPIs)
+		# # policy impact evaluation
+		# policy_impact_evaluation(model_run_SM, model_run_schelling, IssueInit, interval_tick)
+
+		# # running the policy emergence model
+		# if i == 0:
+		# 	KPIs = issue_mapping(IssueInit, type0agents, type1agents)
+		# else:
+		# 	KPIs = issue_mapping(KPIs, type0agents, type1agents)
+		# policy_chosen = model_run_SM.step(KPIs)
 
 		# run of the segregation model for n ticks
 		for p in range(interval_tick):
 			KPIs, type0agents, type1agents = model_run_schelling.step(policy_chosen)
-			policy_chosen = [None for ite in range(len(model_run_SM.policy_instruments[0]))] # reset policy after it has been implemented once
+			# policy_chosen = [None for ite in range(len(model_run_SM.policy_instruments[0]))] # reset policy after it has been implemented once
 
 	# output of the data
 	# Schelling model
@@ -106,12 +104,12 @@ for i_runs in range(repetitions_runs):
 	dataPlot_Schelling_model = model_run_schelling.datacollector.get_model_vars_dataframe()
 	# dataPlot_Schelling_agents = model_run_schelling.datacollector.get_agent_vars_dataframe()
 
-	dataPlot_Schelling_model.to_csv('O_Sch_model_' + str(exp_number) + '_' + str(i_runs) + '.csv')
+	dataPlot_Schelling_model.to_csv('O_SchAlone_model_' + str(i_runs) + '.csv')
 	# dataPlot_Schelling_agents.to_csv('O_Sch_agents_', exp_number, '_', i_runs, '.csv')  # agents are not needed a this point
 
-	# policy emergence model
-	dataPlot_SM_model = model_run_SM.datacollector.get_model_vars_dataframe()
-	dataPlot_SM_agents = model_run_SM.datacollector.get_agent_vars_dataframe()
+	# # policy emergence model
+	# dataPlot_SM_model = model_run_SM.datacollector.get_model_vars_dataframe()
+	# dataPlot_SM_agents = model_run_SM.datacollector.get_agent_vars_dataframe()
 
-	dataPlot_SM_model.to_csv('O_SM_model_' + str(exp_number) + '_' + str(i_runs) + '.csv')
-	dataPlot_SM_agents.to_csv('O_SM_agents_' + str(exp_number) + '_' + str(i_runs) + '.csv')
+	# dataPlot_SM_model.to_csv('O_SM_model_' + str(exp_number) + '_' + str(i_runs) + '.csv')
+	# dataPlot_SM_agents.to_csv('O_SM_agents_' + str(exp_number) + '_' + str(i_runs) + '.csv')

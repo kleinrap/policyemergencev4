@@ -14,6 +14,10 @@ from model_SM_agents_initialisation import issuetree_creation, policytree_creati
 The architecture present here is to be used for performing experiments. A batch runner algorithm will be used such that a set of experiments can be run at the same time.
 '''
 
+# model version
+# 0 - SM, 1 - SM+1 electorate, 2 - SM+2 actions, 3 - SM+3 networks, 4 - SM+4 bounded, 5 - SM+5 coalitions
+SM_version = 1
+
 # batch run parameters
 repetitions_runs = 5
 exp_number = 0
@@ -114,7 +118,7 @@ for exp_i in range(3):
 					KPIs = issue_mapping(IssueInit, type0agents, type1agents)
 				else:
 					KPIs = issue_mapping(KPIs, type0agents, type1agents)
-				policy_chosen = model_run_SM.step(KPIs)
+				policy_chosen = model_run_SM.step(SM_version, KPIs)
 
 				# run of the segregation model for n ticks
 				for p in range(interval_tick):
