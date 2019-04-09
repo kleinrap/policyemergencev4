@@ -91,6 +91,19 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 	for r in range(number_activeagents):
 		policytree0.append(policytree_creation(self, len_PC, len_S, len_PF, len_ins_1, len_ins_2, len_ins_all))
 
+
+	# model conflict level issue tree structure
+	conflictLevelIssue = [None]
+	conflictLevelIssue0[0] = conflictLevelIssue_creation(self, len_DC, len_PC, len_S, len_CR) # using the newly made function
+	for r in range(number_activeagents):
+		conflictLevelIssue0.append(conflictLevelIssue_creation(self, len_DC, len_PC, len_S, len_CR))
+
+	# model conflict level policy tree structure
+	conflictLevelPolicy0 = [None]
+	conflictLevelPolicy0[0] = conflictLevelPolicy_creation(self, len_PC, len_S, len_PF, len_ins_1, len_ins_2, len_ins_all)
+	for r in range(number_activeagents):
+		conflictLevelPolicy0.append(conflictLevelPolicy_creation(self, len_PC, len_S, len_PF, len_ins_1, len_ins_2, len_ins_all))
+
 	# initialisation of a number of standard inputs
 	x = 0
 	y = 0
@@ -112,8 +125,10 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 			for k in range(len_DC*len_PC + len_PC * len_S):
 				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = goal_profiles[i][len_DC + len_PC + len_S + k+1]
 			policytree = copy.deepcopy(policytree0)
+			conflictLevelIssue = copy.deepcopy(conflictLevelIssue0)
+			conflictLevelPolicy = copy.deepcopy(conflictLevelPolicy0)
 
-			agent = ActiveAgent((x, y), unique_id, self, agent_type, resources, affiliation, issuetree, policytree)
+			agent = ActiveAgent((x, y), unique_id, self, agent_type, resources, affiliation, issuetree, policytree, conflictLevelIssue, conflictLevelPolicy)
 			# agent.preference_update(agent, unique_id)  # updating the issue tree preferences
 			self.grid.position_agent(agent, (x, y))
 			self.schedule.add(agent)
@@ -138,8 +153,10 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 			for k in range(len_DC*len_PC + len_PC * len_S):
 				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = goal_profiles[i][len_DC + len_PC + len_S + k+1]
 			policytree = copy.deepcopy(policytree0)
+			conflictLevelIssue = copy.deepcopy(conflictLevelIssue0)
+			conflictLevelPolicy = copy.deepcopy(conflictLevelPolicy0)
 
-			agent = ActiveAgent((x, y), unique_id, self, agent_type, resources, affiliation, issuetree, policytree)
+			agent = ActiveAgent((x, y), unique_id, self, agent_type, resources, affiliation, issuetree, policytree, conflictLevelIssue, conflictLevelPolicy)
 			# agent.preference_update(agent, unique_id)  # updating the issue tree preferences
 			self.grid.position_agent(agent, (x, y))
 			self.schedule.add(agent)
@@ -165,8 +182,10 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 			for k in range(len_DC*len_PC + len_PC * len_S):
 				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = goal_profiles[i][len_DC + len_PC + len_S + k+1]
 			policytree = copy.deepcopy(policytree0)
+			conflictLevelIssue = copy.deepcopy(conflictLevelIssue0)
+			conflictLevelPolicy = copy.deepcopy(conflictLevelPolicy0)
 
-			agent = ActiveAgent((x, y), unique_id, self, agent_type, resources, affiliation, issuetree, policytree)
+			agent = ActiveAgent((x, y), unique_id, self, agent_type, resources, affiliation, issuetree, conflictLevelIssue, conflictLevelPolicy)
 			# agent.preference_update(agent, unique_id)  # updating the issue tree preferences
 			self.grid.position_agent(agent, (x, y))
 			self.schedule.add(agent)
