@@ -272,7 +272,8 @@ class ElectorateAgent(Agent):
     def electorate_influence(self, w_el_influence):
 
         '''
-        Function that defines the electorate influence on the policy makers
+        Function that defines the electorate influence on the policy makers.
+        This function is dependent on the electorate influence weight value which can be adjusted as a tuning parameter.
         '''
 
         len_DC = self.model.len_DC
@@ -282,13 +283,8 @@ class ElectorateAgent(Agent):
         for agent in self.model.schedule.agent_buffer(shuffled=True):  
             if isinstance(agent, ActiveAgent) and agent.agent_type == 'policymaker' and agent.affiliation == self.affiliation:
                 _unique_id = agent.unique_id
-                print(agent.affiliation, agent.agent_type, agent)
                 for issue in range(len_DC+len_PC+len_S):
-                    print()
                     agent.issuetree[_unique_id][issue][1] += (self.issuetree_elec[issue] - agent.issuetree[_unique_id][issue][1]) * w_el_influence * abs(agent.issuetree[_unique_id][issue][1] - agent.issuetree[_unique_id][issue][0])
-
-
-        # GoPM,n,i :=GoPM,n,i+(GoEl,n −GoPM,n,i)·W·|GoPM,n,i −BePM,n,i|
 
 
 class TruthAgent(Agent):
