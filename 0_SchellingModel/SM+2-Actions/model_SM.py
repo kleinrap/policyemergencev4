@@ -39,6 +39,7 @@ class PolicyEmergenceSM(Model):
 		self.width = width
 
 		self.SM_inputs = SM_inputs
+		self.conflictLevel_coefficient = SM_inputs[9]  # conflict level coefficients
 
 		self.stepCount = 0
 		self.agenda_PC = None
@@ -174,7 +175,7 @@ class PolicyEmergenceSM(Model):
 					agent.issuetree_truth[issue] = KPIs[issue]
 				truth_issuetree = agent.issuetree_truth
 
-		# Transferring policy impact to active agents
+		# transferring policy impact to active agents
 		for agent in self.schedule.agent_buffer(shuffled=True):
 			if isinstance(agent, ActiveAgent):
 				# replacing the policy family likelihoods
@@ -192,6 +193,12 @@ class PolicyEmergenceSM(Model):
 				for issue in range(self.len_DC+self.len_PC+self.len_S):
 					agent.issuetree[agent.unique_id][issue][0] = truth_issuetree[issue]
 				agent.preference_update(agent, agent.unique_id)
+
+		# updating conflict levels
+		for agent in self.schedule.agent_buffer(shuffled=False):
+			for who in self.schedule.agent_buffer(shuffled=False):
+				if isinstance(agent, ActiveAgent) and isinstance(who, ActiveAgent):
+					agent.conflictLevel_update(agent, who)
 
 	def electorate_influence(self, w_el_influence):
 
@@ -294,6 +301,12 @@ class PolicyEmergenceSM(Model):
 				self.preference_update_PI(agent, agent.unique_id)  # update of the preferences
 				agent.selection_PI()
 
+		# updating conflict levels
+		for agent in self.schedule.agent_buffer(shuffled=False):
+			for who in self.schedule.agent_buffer(shuffled=False):
+				if isinstance(agent, ActiveAgent) and isinstance(who, ActiveAgent):
+					self.conflictLevel_update_policy_PI(agent, who)
+
 		# 3.
 
 		# 4. & 5.
@@ -330,14 +343,6 @@ class PolicyEmergenceSM(Model):
 	def module_interface_output(self):
 
 		print("Module interface output not introduced yet")
-
-	# def preference_update(self, agent, who):
-
-	# 	self.preference_update_DC(agent, who)
-
-	# 	self.preference_update_PC(agent, who)
-
-	# 	self.preference_update_S(agent, who)
 
 	def preference_update_DC(self, agent, who):
 
@@ -720,3 +725,103 @@ class PolicyEmergenceSM(Model):
 				agent.policytree[who][1][PFIns_indices[PIj]][len_S] = 0
 			# print(agent.issuetree[who][PFj])
 		# print(agent.policytree[who][1])
+
+	def conflictLevel_update_parameters(self, interest):
+
+		"""
+		The conflict level update parameter function
+		===========================
+
+		This function is used to update the conflict levels. It only outputs the value of conflict level.
+
+		interest - the substraction of an agent's two interests
+		Interests here means either issue or policy impact.
+
+		"""	
+
+		# low conflict value
+		if interest <= 0.33:
+			conflict_level = self.conflictLevel_coefficient[0]
+		# medium conflict leve
+		if interest > 0.33 and interest <= 0.66:
+			conflict_level = self.conflictLevel_coefficient[1]
+		# high conflict level
+		if interest > 0.66:
+			conflict_level = self.conflictLevel_coefficient[1]
+
+		return conflict_level
+
+	def conflictLevel_update_issue(self, agent, who):
+
+		"""
+		The conflict level issue update function
+		===========================
+
+		This function is used to update the conflict level of issues for an agent.
+
+		agent - this is the agent whose conflict levels are updated
+		who - this is the agent targetted for the conflict level
+
+		"""	
+		_unique_id = agent.unique_id
+		if agent != who:  # the agent has no conflict level with itself
+			# for the issues
+			for issue in range(self.len_DC+self.len_PC+self.len_S):
+				belief_diff = abs(agent.issuetree[_unique_id][issue][0] - who.issuetree[who.unique_id][issue][0])
+				goal_diff = abs(agent.issuetree[_unique_id][issue][1] - who.issuetree[who.unique_id][issue][1])
+				agent.conflictLevelIssue[who.unique_id][issue][0] = self.conflictLevel_update_parameters(belief_diff)
+				agent.conflictLevelIssue[who.unique_id][issue][1] = self.conflictLevel_update_parameters(goal_diff)
+			# for the causal relations
+			to_cr = self.len_DC+self.len_PC+self.len_S
+			for cr in range(self.len_DC*self.len_PC+self.len_PC*self.len_S):
+				cr_diff = abs(agent.issuetree[_unique_id][to_cr+cr][0] - who.issuetree[who.unique_id][to_cr+cr][0])
+				agent.conflictLevelIssue[who.unique_id][to_cr+cr][0] = self.conflictLevel_update_parameters(cr_diff)
+
+	def conflictLevel_update_policy_PF(self, agent, who):
+
+		"""
+		The conflict level policy family update function
+		===========================
+
+		This function is used to update the conflict level of the policy families for an agent.
+
+		agent - this is the agent whose conflict levels are updated
+		who - this is the agent targetted for the conflict level
+
+		"""	
+		_unique_id = agent.unique_id
+		if agent != who:  # the agent has no conflict level with itself
+			for PFj in range(self.len_PC):
+				for PCi in range(self.len_PC):
+					impact_diff = abs(agent.policytree[_unique_id][0][PFj][PCi] - who.policytree[who.unique_id][0][PFj][PCi])
+					agent.conflictLevelPolicy[who.unique_id][0][PFj][PCi] = self.conflictLevel_update_parameters(impact_diff)
+
+	def conflictLevel_update_policy_PI(self, agent, who):
+
+		"""
+		The conflict level policy instruments update function
+		===========================
+
+		This function is used to update the conflict level of the policy instruments for an agent.
+
+		agent - this is the agent whose conflict levels are updated
+		who - this is the agent targetted for the conflict level
+
+		"""	
+
+		# selecting the policy instrument from the policy family on the agenda
+		agenda_PF_change = False
+		if self.agenda_PF == None:  # if there is no agenda, set one temporarily
+			self.agenda_PF = 0
+			agenda_PF_change = True
+		PFIns_indices = self.PF_indices[self.agenda_PF]
+
+		_unique_id = agent.unique_id
+		if agent != who:  # the agent has no conflict level with itself
+			for PIj in range(len(PFIns_indices)):
+				for Si in range(self.len_S):
+					impact_diff = abs(agent.policytree[_unique_id][1][PFIns_indices[PIj]][Si] - who.policytree[who.unique_id][1][PFIns_indices[PIj]][Si])
+					agent.conflictLevelPolicy[who.unique_id][1][PFIns_indices[PIj]][Si] = self.conflictLevel_update_parameters(impact_diff)
+
+		if agenda_PF_change == True:  # if there was no agenda, reset it to None
+			self.agenda_PF = None

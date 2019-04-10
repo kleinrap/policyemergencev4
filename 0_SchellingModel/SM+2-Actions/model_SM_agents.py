@@ -7,7 +7,7 @@ class ActiveAgent(Agent):
     '''
     Active agents, including policy makers, policy entrepreneurs and external parties.
     '''
-    def __init__(self, pos, unique_id, model, agent_type, resources, affiliation, issuetree, policytree):
+    def __init__(self, pos, unique_id, model, agent_type, resources, affiliation, issuetree, policytree, conflictLevelIssue, conflictLevelPolicy):
         
         '''
          Args:
@@ -23,6 +23,8 @@ class ActiveAgent(Agent):
         self.affiliation = affiliation  # political affiliation affecting agent interactions
         self.issuetree = issuetree  # issue tree of the agent (including partial issue of other agents)
         self.policytree = policytree
+        self.conflictLevelIssue = conflictLevelIssue
+        self.conflictLevelPolicy = conflictLevelPolicy
 
         # selected issues and policies
         self.selected_PC = None
@@ -39,6 +41,14 @@ class ActiveAgent(Agent):
         self.model.preference_update_S(agent, who)
 
         self.model.preference_update_PF(agent, who)
+
+    def conflictLevel_update(self, agent, who):
+
+        self.model.conflictLevel_update_issue(agent, who)
+
+        self.model.conflictLevel_update_policy_PF(agent, who)
+
+        self.model.conflictLevel_update_policy_PI(agent, who)
 
     def selection_PC(self):
 

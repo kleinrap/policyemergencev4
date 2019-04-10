@@ -76,6 +76,10 @@ for i in range(len(resources_aff)*2):
 # putting all of the profiles into one list for the different experiments
 goal_profiles = [goal_profiles_Ex1, goal_profiles_Ex2, goal_profiles_Ex3Be, goal_profiles_Ex3Af]
 
+# SM+2 parameters
+# conflict level coefficient [low, medium, high]
+conflictLevel_coefficient = [0.75, 0.95, 0.85]
+
 # running a number of experiments
 for exp_i in range(3):
 
@@ -83,7 +87,7 @@ for exp_i in range(3):
 	for sce_i in range (3):
 
 		# creating the agents for the policy emergence model
-		SM_inputs = [SM_PMs, SM_PMs_aff, SM_PEs, SM_PEs_aff, SM_EPs, SM_EPs_aff, resources_aff, representativeness, goal_profiles[exp_i]]
+		SM_inputs = [SM_PMs, SM_PMs_aff, SM_PEs, SM_PEs_aff, SM_EPs, SM_EPs_aff, resources_aff, representativeness, goal_profiles[exp_i], conflictLevel_coefficient]
 
 		# running a number of repetitions per experiment
 		for rep_runs in range(repetitions_runs):
