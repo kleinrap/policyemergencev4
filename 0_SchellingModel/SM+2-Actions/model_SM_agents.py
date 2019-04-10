@@ -140,9 +140,13 @@ class ActiveAgent(Agent):
         self.selected_PI = self.model.PF_indices[self.model.agenda_PF][self.selected_PI]
         # print("Policy instrument selected: ",self.selected_PI)
 
-    def update_conflictLevels(self):
+    def action_AS(self):
 
-        pass
+        return 0
+
+    def action_PF(self):
+
+        return 0 
 
 class ElectorateAgent(Agent):
     '''

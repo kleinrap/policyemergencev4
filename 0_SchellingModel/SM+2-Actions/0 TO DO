@@ -5,9 +5,12 @@ TO DO LIST
 1. Making agents either policy or issue driven
 	- Include a preference in the policy families and the policy instruments (done)
 
-2. Conflict level introduction
+2. Conflict level introduction (done)
 
 2. Actions introduction
+	- Infrastructure for the right actions to be performed
+	- Likelihood of performing an action
+	- Implementation of the action
 
 6. Construction of the module interface
 	- Define how to initialise the beliefs of the agents (from the model or based on surveys)

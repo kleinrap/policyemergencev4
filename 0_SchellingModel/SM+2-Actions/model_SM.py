@@ -143,7 +143,6 @@ class PolicyEmergenceSM(Model):
 			self.policy_implemented = self.policy_instruments[-1]
 
 		# 3.
-		# self.module_interface_output()
 
 		# end of step actions:
 		# iterate the steps counter
@@ -217,7 +216,7 @@ class PolicyEmergenceSM(Model):
 		The agenda setting step is the first step in the policy process conceptualised in this model. The steps are given as follows:
 		1. Active agents policy core issue selection
 		2. Active agents policy family selection
-		3. Active agents actions [to be detailed later]
+		3. Active agents actions
 		4. Active agents policy core issue selection update
 		5. Active agents policy family selection update
 		6. Agenda selection
@@ -231,6 +230,10 @@ class PolicyEmergenceSM(Model):
 				# print("PC and PF selected for  agent", agent.unique_id, ": ", agent.selected_PC, agent.selected_PF)
 
 		# 3.
+		if SM_version >= 2: # SM+2 and higher
+			for agent in self.schedule.agent_buffer(shuffled=False):
+				if isinstance(agent, ActiveAgent):
+					agent.action_AS()
 
 		# 4. & 5.
 		for agent in self.schedule.agent_buffer(shuffled=False):
@@ -286,7 +289,6 @@ class PolicyEmergenceSM(Model):
 		4. Active agents policy instrument selection update
 		5. Policy instrument selection
 
-		NOTE: THIS CODE DOESNT CONSIDER MAJORITY WHEN MORE THAN THREE POLICY MAKERS ARE INCLUDED, IT CONSIDERS THE MAXIMUM. THIS NEEDS TO BE ADAPTED TO CONSIDER 50% OR MORE!
 		'''
 
 		print("Policy formulation being introduced")
@@ -308,6 +310,10 @@ class PolicyEmergenceSM(Model):
 					self.conflictLevel_update_policy_PI(agent, who)
 
 		# 3.
+		if SM_version >= 2: # SM+2 and higher
+			for agent in self.schedule.agent_buffer(shuffled=False):
+				if isinstance(agent, ActiveAgent):
+					agent.action_PF()
 
 		# 4. & 5.
 		for agent in self.schedule.agent_buffer(shuffled=False):
@@ -339,10 +345,6 @@ class PolicyEmergenceSM(Model):
 		else:
 			print("No consensus on a policy instrument.")
 			self.policy_implemented = self.policy_instruments[-1] # selecting last policy instrument which is the no instrument policy instrument
-
-	def module_interface_output(self):
-
-		print("Module interface output not introduced yet")
 
 	def preference_update_DC(self, agent, who):
 
