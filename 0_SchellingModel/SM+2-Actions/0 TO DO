@@ -1,26 +1,28 @@
 TO DO LIST
 
---- SM+1 electorate ---------------
+--- SM+2 actions ---------------
 
 1. Making agents either policy or issue driven
 	- Include a preference in the policy families and the policy instruments (done)
 
 2. Conflict level introduction (done)
 
+3. Pre-actions infrastructure:
+	- Introduce new preference calculation (done)
+	- Introduce issue and policy drive agents (done)
+	- Add new belief updates (SM+2+ only)
+	- Add new impact updated (SM+2+ only)
+
 2. Actions introduction
-	- Infrastructure for the right actions to be performed
 	- Likelihood of performing an action
 	- Implementation of the action
-
-6. Construction of the module interface
-	- Define how to initialise the beliefs of the agents (from the model or based on surveys)
-	- Define how instruments should be implemented into the system/policy context
 
 7. First full SM model runs
 	
 	- 
 
-
+X. Checks:
+	- 
 
 Regarding the policy instruments:
-- 
+	- 

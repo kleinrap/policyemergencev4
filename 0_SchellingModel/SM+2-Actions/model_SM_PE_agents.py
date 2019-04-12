@@ -2,6 +2,7 @@ from mesa import Model, Agent
 from mesa.time import RandomActivation
 from mesa.space import SingleGrid
 from mesa.datacollection import DataCollector
+import copy
 
 class ActiveAgent(Agent):
     '''
@@ -31,6 +32,8 @@ class ActiveAgent(Agent):
         self.selected_PF = None
         self.selected_S = None
         self.selected_PI = None
+        self.focus_AS = None
+        self.focus_PF = None
 
     def preference_update(self, agent, who):
 
@@ -50,6 +53,116 @@ class ActiveAgent(Agent):
 
         self.model.conflictLevel_update_policy_PI(agent, who)
 
+    def selection_focus_AS(self):
+
+        '''
+        The agenda setting focus selection function
+        ===========================
+
+        This function is used to select which focus the agent will have: issue or policy.
+
+        Note: For the policy families, the preferences have to be first reversed as the best preferences for the policy family is the minimum preference. They can then be compared to the preferences of the policy core issues.
+
+        Note2: Actually, there would be no need to invert it as we don't care about the best PF but just whether we have a PF or a PC as the focus. So it has been commented
+        '''
+
+        len_PC = self.model.len_PC
+        len_PF = self.model.len_PC
+
+        PCF_pref_list = []
+        for i in range(len_PC):
+            PCF_pref_list.append(self.issuetree[self.unique_id][self.model.len_DC + i][2])
+        for i in range(len_PF):
+            PCF_pref_list.append(self.policytree[self.unique_id][0][i][len_PF])
+
+        focus_index = PCF_pref_list.index(max(PCF_pref_list))
+
+        if focus_index < len_PC:
+            self.focus_AS = 'i'
+        else:
+            self.focus_AS = 'p'
+
+        # ''' for the policy core issues'''
+        # len_PC = self.model.len_PC
+        # # compiling all the preferences
+        # PC_pref_list = []
+        # for i in range(len_PC):
+        #     PC_pref_list.append([self.issuetree[self.unique_id][self.model.len_DC + i][2], self.model.len_DC + i])
+
+        # ''' for the policy families '''
+        # len_PF = self.model.len_PC
+
+        # # selection of the preferred policy family
+        # # compiling and reversing all the PF preferences
+        # PF_pref_list = []
+        # for i in range(len_PF):
+        #     PF_pref_list.append([self.policytree[self.unique_id][0][i][len_PF], i])
+
+        # def getKey(item):
+        #     return item[0]
+        # # sorting the list for reversal
+        # PF_pref_list = sorted(PF_pref_list, key=getKey)
+
+        # PF_pref_list_RA = []
+        # for item in PF_pref_list[::-1]:
+        #     PF_pref_list_RA.append(copy.deepcopy(item))
+
+        # for i in range(len(PF_pref_list_RA)):
+        #     PF_pref_list_RA[i][1] = copy.deepcopy(PF_pref_list[i][1])
+
+        # ''' focus selection '''
+        # PCF_pref_list = []
+        # for i in PC_pref_list:
+        #     PCF_pref_list.append(i)
+        # for i in PF_pref_list_RA:
+        #     PCF_pref_list.append(i)
+
+        # focus_index = PCF_pref_list.index(max(PCF_pref_list))
+
+        # if focus_index < len_PC:
+        #     self.focus = 'i'
+        # else:
+        #     self.focus = 'p'
+
+    def selection_focus_PF(self):
+
+        '''
+        The policy formulation focus selection function
+        ===========================
+
+        This function is used to select which focus the agent will have: issue or policy.
+
+        Note: If there are a lot of policy instruments, the agents will always select a secondary issue as the focus as the preference is more diluted between the policies leading to an almost always preference for the issues.
+
+        '''
+
+        len_DC = self.model.len_DC
+        len_PC = self.model.len_PC
+        len_S = self.model.len_S
+
+        # considering only issues related to the issue on the agenda
+        S_pref_list_indices = []
+        for i in range(len_S):
+            if self.issuetree[self.unique_id][len_DC+len_PC+len_S+len_DC*len_PC+self.model.agenda_PC*len_S+i][0] !=0:
+                S_pref_list_indices.append(i)
+
+        # selecting the policy instrument from the policy family on the agenda
+        PFIns_indices = self.model.PF_indices[self.model.agenda_PF]
+
+        # assembling the total list with secondary issues and policy instruments
+        SPIns_pref_list = []
+        for i in range(len(S_pref_list_indices)):
+            SPIns_pref_list.append(self.issuetree[self.unique_id][len_DC+len_PC+S_pref_list_indices[i]][2])
+        for i in range(len(PFIns_indices)):
+            SPIns_pref_list.append(self.policytree[self.unique_id][1][PFIns_indices[i]][len_S])
+
+        focus_index = SPIns_pref_list.index(max(SPIns_pref_list))
+
+        if focus_index < len(S_pref_list_indices):
+            self.focus_PF = 'i'
+        else:
+            self.focus_PF = 'p'
+
     def selection_PC(self):
 
         '''
@@ -63,11 +176,6 @@ class ActiveAgent(Agent):
 
         # assigning the highest preference as the selected policy core issue
         self.selected_PC = PC_pref_list.index(max(PC_pref_list))
-
-        # print(self, self.selected_PC)
-        # print("affiliation :", self.affiliation)
-        # print(self.issuetree[self.unique_id][self.model.len_DC+self.selected_PC][2])
-        # print(self.issuetree[self.unique_id][self.model.len_DC][2])
 
     def selection_PF(self):
         
@@ -99,7 +207,7 @@ class ActiveAgent(Agent):
         # considering only issues related to the issue on the agenda
         S_pref_list_indices = []
         for i in range(len_S):
-            if self.issuetree[self.unique_id][len_DC+len_PC+len_S+len_DC*len_PC+self.model.agenda_PC*len_S+i][0] !=0:
+            if self.issuetree[self.unique_id][len_DC+len_PC+len_S+len_DC*len_PC+self.model.agenda_PC*len_S+i][0] != 0:
                 S_pref_list_indices.append(i)
 
         S_pref_list = [None for i in range(len(S_pref_list_indices))]
@@ -110,11 +218,6 @@ class ActiveAgent(Agent):
         self.selected_S = S_pref_list.index(max(S_pref_list))
         # make sure to select the right value in the list of indices (and not based on the index in the list of preferences)
         self.selected_S = S_pref_list_indices[self.selected_S]
-
-        # print(self, self.selected_S)
-        # print("affiliation :", self.affiliation)
-        # print(self.issuetree[self.unique_id][len_DC+len_PC+self.selected_S][2])
-        # print(self.issuetree[self.unique_id])
 
     def selection_PI(self):
         

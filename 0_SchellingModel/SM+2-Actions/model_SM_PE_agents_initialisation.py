@@ -2,7 +2,7 @@ import random
 import copy
 import pandas as pd
 
-from model_SM_agents import ActiveAgent, ElectorateAgent, TruthAgent
+from model_SM_PE_agents import ActiveAgent, ElectorateAgent, TruthAgent
 
 def issuetree_creation(self, len_DC, len_PC, len_S, len_CR):
 
@@ -48,24 +48,24 @@ def conflictLevelPolicy_creation(self, len_PC, len_S, len_PF, len_ins_1, len_ins
 	return conflictLevelPolicy
 
 
-def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, len_ins_2, len_ins_all, SM_inputs):
+def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, len_ins_2, len_ins_all, PE_inputs):
 
-	# SM_inputs opening
-	SM_PMs = SM_inputs[0]  # number of policy makers
-	SM_PMs_aff = SM_inputs[1]  # policy maker distribution per affiliation
-	SM_PEs = SM_inputs[2]  # number of policy entrepreneurs
-	SM_PEs_aff = SM_inputs[3]  # policy entrepreneur distribution per affiliation
-	SM_EPs = SM_inputs[4]  # number of external parties
-	SM_EPs_aff = SM_inputs[5]  # external parties distribution per affiliation
-	resources_aff = SM_inputs[6]  # resources per affiliation agent out of 100
-	goal_profiles = SM_inputs[8]  # goal profiles for active agents and electorate
+	# PE_inputs opening
+	PE_PMs = PE_inputs[0]  # number of policy makers
+	PE_PMs_aff = PE_inputs[1]  # policy maker distribution per affiliation
+	PE_PEs = PE_inputs[2]  # number of policy entrepreneurs
+	PE_PEs_aff = PE_inputs[3]  # policy entrepreneur distribution per affiliation
+	PE_EPs = PE_inputs[4]  # number of external parties
+	PE_EPs_aff = PE_inputs[5]  # external parties distribution per affiliation
+	resources_aff = PE_inputs[6]  # resources per affiliation agent out of 100
+	goal_profiles = PE_inputs[8]  # goal profiles for active agents and electorate
 
 	aff_number = len(resources_aff)
-	if aff_number!= len(SM_PMs_aff) or aff_number != len(SM_PMs_aff) or aff_number != len(SM_EPs_aff):
+	if aff_number!= len(PE_PMs_aff) or aff_number != len(PE_PEs_aff) or aff_number != len(PE_EPs_aff):
 		print("MISTAKE IN THE INPUTS on affiliation")
 
 	# agent global properties
-	number_activeagents = SM_EPs + SM_PMs + SM_PEs
+	number_activeagents = PE_EPs + PE_PMs + PE_PEs
 
 	# model issue tree structure
 	issuetree0 = [None]
@@ -113,7 +113,7 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 	for i in range(aff_number):
 		# creation of the policy makers
 		j = 0
-		while j < SM_PMs_aff[i]:
+		while j < PE_PMs_aff[i]:
 			agent_type = 'policymaker'
 			affiliation = i
 			resources = resources_aff[i]
@@ -141,7 +141,7 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 
 		# creation of the policy entrepreneurs
 		jj = 0
-		while jj < SM_PEs_aff[i]:
+		while jj < PE_PEs_aff[i]:
 			agent_type = 'policyentrepreneur'
 			affiliation = i
 			resources = resources_aff[i]
@@ -170,7 +170,7 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 
 		# creation of the external parties
 		jjj = 0
-		while jjj < SM_EPs_aff[i]:
+		while jjj < PE_EPs_aff[i]:
 			agent_type = 'externalparty'
 			affiliation = i
 			resources = resources_aff[i]
@@ -202,7 +202,7 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 	# 		if isinstance(agent, ActiveAgent):
 	# 			print(agent.unique_id, agent.agent_type, agent.affiliation, agent.resources, agent.issuetree[agent.unique_id])
 
-def init_electorate_agents(self, len_S, len_PC, len_DC, SM_inputs):
+def init_electorate_agents(self, len_S, len_PC, len_DC, PE_inputs):
 
 	# model issue tree structure
 	# the format for the whole issue tree is given as:
@@ -210,9 +210,9 @@ def init_electorate_agents(self, len_S, len_PC, len_DC, SM_inputs):
 	# This only contains the goals of the electorate.
 	issuetree0 = [0 for f in range(len_DC + len_PC + len_S)]
 
-	aff_number = len(SM_inputs[6])
-	representativeness_aff = SM_inputs[7]
-	goal_profiles = SM_inputs[8]
+	aff_number = len(PE_inputs[6])
+	representativeness_aff = PE_inputs[7]
+	goal_profiles = PE_inputs[8]
 
 	# creation of the agents
 	# electorate 1

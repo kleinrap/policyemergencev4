@@ -6,8 +6,8 @@ import numpy as np
 
 from collections import defaultdict
 
-from model_SM_agents_initialisation import init_active_agents, init_electorate_agents, init_truth_agent
-from model_SM_agents import ActiveAgent, ElectorateAgent, TruthAgent
+from model_SM_PE_agents_initialisation import init_active_agents, init_electorate_agents, init_truth_agent
+from model_SM_PE_agents import ActiveAgent, ElectorateAgent, TruthAgent
 from model_module_interface import policy_instrument_input, issue_tree_input
 
 
@@ -33,13 +33,13 @@ class PolicyEmergenceSM(Model):
 	Simplest Model for the policy emergence model.
 	'''
 
-	def __init__(self, SM_inputs, height=20, width=20):
+	def __init__(self, PE_inputs, height=20, width=20):
 
 		self.height = height
 		self.width = width
 
-		self.SM_inputs = SM_inputs
-		self.conflictLevel_coefficient = SM_inputs[9]  # conflict level coefficients
+		self.PE_inputs = PE_inputs
+		self.conflictLevel_coefficient = PE_inputs[9]  # conflict level coefficients
 
 		self.stepCount = 0
 		self.agenda_PC = None
@@ -81,10 +81,10 @@ class PolicyEmergenceSM(Model):
 		self.policy_instruments, self.len_ins_1, self.len_ins_2, self.len_ins_all, self.PF_indices = policy_instrument_input(self, self.len_PC)
 
 		# Set up active agents
-		init_active_agents(self, self.len_S, self.len_PC, self.len_DC, self.len_CR, self.len_PC, self.len_ins_1, self.len_ins_2, self.len_ins_all, self.SM_inputs)
+		init_active_agents(self, self.len_S, self.len_PC, self.len_DC, self.len_CR, self.len_PC, self.len_ins_1, self.len_ins_2, self.len_ins_all, self.PE_inputs)
 
 		# Set up passive agents
-		init_electorate_agents(self, self.len_S, self.len_PC, self.len_DC, self.SM_inputs)
+		init_electorate_agents(self, self.len_S, self.len_PC, self.len_DC, self.PE_inputs)
 
 		# Set up truth agent
 		init_truth_agent(self, self.len_S, self.len_PC, self.len_DC, self.len_ins_1, self.len_ins_2, self.len_ins_all)
@@ -134,11 +134,11 @@ class PolicyEmergenceSM(Model):
 			self.electorate_influence(self.w_el_influence)  # electorate influence action		
 
 		# 1.
-		self.agenda_setting()
+		self.agenda_setting(SM_version)
 
 		# 2.
 		if self.policy_formulation_run:  # making sure first that an agenda has been created
-			self.policy_formulation()
+			self.policy_formulation(SM_version)
 		else:  # otherwise, the status quo remains
 			self.policy_implemented = self.policy_instruments[-1]
 
@@ -210,7 +210,7 @@ class PolicyEmergenceSM(Model):
 			if isinstance(agent, ElectorateAgent):
 				agent.electorate_influence(w_el_influence)
 
-	def agenda_setting(self):
+	def agenda_setting(self, SM_version):
 
 		'''
 		The agenda setting step is the first step in the policy process conceptualised in this model. The steps are given as follows:
@@ -227,6 +227,8 @@ class PolicyEmergenceSM(Model):
 			if isinstance(agent, ActiveAgent):  # considering only active agents
 				agent.selection_PC()
 				agent.selection_PF()
+				if SM_version >= 2:
+					agent.selection_focus_AS()
 				# print("PC and PF selected for  agent", agent.unique_id, ": ", agent.selected_PC, agent.selected_PF)
 
 		# 3.
@@ -278,7 +280,7 @@ class PolicyEmergenceSM(Model):
 			self.policy_formulation_run = False
 			print("No agenda was formed, moving to the next step.")
 
-	def policy_formulation(self):
+	def policy_formulation(self, SM_version):
 
 		'''
 		The policy formulation step is the second step in the policy process conceptualised in this model. The steps are given as follows:
@@ -302,6 +304,8 @@ class PolicyEmergenceSM(Model):
 				agent.selection_S()
 				self.preference_update_PI(agent, agent.unique_id)  # update of the preferences
 				agent.selection_PI()
+				if SM_version >= 2:
+					agent.selection_focus_PF()
 
 		# updating conflict levels
 		for agent in self.schedule.agent_buffer(shuffled=False):
@@ -725,8 +729,6 @@ class PolicyEmergenceSM(Model):
 				agent.policytree[who][1][PFIns_indices[PIj]][len_S] = round(PI_numerator/PI_denominator,3)
 			else:
 				agent.policytree[who][1][PFIns_indices[PIj]][len_S] = 0
-			# print(agent.issuetree[who][PFj])
-		# print(agent.policytree[who][1])
 
 	def conflictLevel_update_parameters(self, interest):
 
