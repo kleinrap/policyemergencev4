@@ -96,7 +96,7 @@ for exp_i in range(4):
 		# running a number of repetitions per experiment
 		for rep_runs in range(repetitions_runs):
 
-			if rep_runs >= 5 and exp_i == 3:
+			if rep_runs >= 0:
 
 				# initialisation of the Schelling model
 				model_run_schelling = Schelling(sch_height, sch_width, sch_density, sch_minority_pc, sch_homophilyType0, sch_homophilyType1, sch_movementQuota, sch_happyCheckRadius, sch_moveCheckRadius, sch_last_move_quota)
