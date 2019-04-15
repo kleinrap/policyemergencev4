@@ -243,11 +243,31 @@ class ActiveAgent(Agent):
         self.selected_PI = self.model.PF_indices[self.model.agenda_PF][self.selected_PI]
         # print("Policy instrument selected: ",self.selected_PI)
 
-    def action_AS(self):
+    def action_AS_issue(self):
+
+        '''
+        The action function for issue focused agents in the agenda setting
+        ===========================
+
+        This function is used to calculate the likelihood of an agent performing an action and apply the selected action. This is for the issue focused agents in the agenda setting. The actions allowed are:
+        - (Framing 'fra') - Influence on the causal relations above the selected policy core issue
+        - (Direct goal influence 'dgoa') - Influence on the goals of the selected policy core issue
+        - (Direct belief influence 'dbel') - Influence on the beliefs of the selected policy core issue
+
+
+        '''
 
         return 0
 
-    def action_PF(self):
+    def action_AS_policy(self):
+
+        return 0
+
+    def action_PF_issue(self):
+
+        return 0 
+
+    def action_PF_policy(self):
 
         return 0 
 

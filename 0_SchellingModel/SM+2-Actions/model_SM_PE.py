@@ -49,6 +49,8 @@ class PolicyEmergenceSM(Model):
 		self.policy_formulation_run = False  # True if an agenda is found
 
 		self.w_el_influence = 0.05  # electorate influence weight
+		self.w_belief_update = 0.10  # belief update weight
+		self.w_policy_update = 0.10  # likelihood and impact update weight
 
 		self.schedule = RandomActivation(self)
 		self.grid = SingleGrid(height, width, torus=True)
@@ -129,7 +131,7 @@ class PolicyEmergenceSM(Model):
 		self.KPIs = KPIs
 
 		# 0.
-		self.module_interface_input(self.KPIs)  # transfer of the states
+		self.module_interface_input(self.KPIs, SM_version)  # transfer of the states
 		if SM_version >= 1: # SM+1 and higher
 			self.electorate_influence(self.w_el_influence)  # electorate influence action		
 
@@ -159,13 +161,36 @@ class PolicyEmergenceSM(Model):
 
 		return self.policy_implemented
 
-	def module_interface_input(self, KPIs):
+	def module_interface_input(self, KPIs, SM_version):
 
 		'''
-		The module interface input step consists of actions related to the module interface and the policy emergence model
+		The module interface function
+		===========================
+
+		This function is used to transfer knowledge to the actors from the policy context.
+
+
+		1. Beliefs
+			a. Transfer of the KPIs to the truth agent.
+			b. Transfer of the beliefs from truth agent to active agents
+		2. Transfer of the policy impact to the active agents.
+			a. Transfer of the policy family likelihoods
+			b. Transfer of the policy instrument impacts
+		3. Preferences calculations
+		4. Conflict level calculations
+
+		Note: to make sure the agents start at a good baseline, the first step, the beliefs and impact are outright updated
+
+		SM+0-1:
+		- Outright update of the beliefs and impacts
+		SM+2:
+		- Paced update of the beliefs and impacts
 
 		'''
+		w_belief_update = self.w_belief_update
+		w_policy_update = self.w_policy_update
 
+		# transfer of the policy tree related issue knowledge
 		# selection of the Truth agent policy tree and issue tree
 		for agent in self.schedule.agent_buffer(shuffled=True):
 			if isinstance(agent, TruthAgent):
@@ -174,23 +199,46 @@ class PolicyEmergenceSM(Model):
 					agent.issuetree_truth[issue] = KPIs[issue]
 				truth_issuetree = agent.issuetree_truth
 
+		# replacing the issue beliefs from the KPIs
+		if SM_version < 2 or self.stepCount == 0:  # outright replacing the beliefs
+			for agent in self.schedule.agent_buffer(shuffled=True):
+				if isinstance(agent, ActiveAgent):
+					for issue in range(self.len_DC+self.len_PC+self.len_S):
+						agent.issuetree[agent.unique_id][issue][0] = truth_issuetree[issue]
+		if SM_version == 2:  # paced update of the beliefs
+			for agent in self.schedule.agent_buffer(shuffled=True):
+				if isinstance(agent, ActiveAgent):
+					for issue in range(self.len_DC+self.len_PC+self.len_S):
+						agent.issuetree[agent.unique_id][issue][0] += (truth_issuetree[issue] - agent.issuetree[agent.unique_id][issue][0]) * w_belief_update
+
 		# transferring policy impact to active agents
-		for agent in self.schedule.agent_buffer(shuffled=True):
+		if SM_version < 2 or self.stepCount == 0:  # outright replacing the impacts
+			for agent in self.schedule.agent_buffer(shuffled=True):
+				if isinstance(agent, ActiveAgent):
+					# replacing the policy family likelihoods
+					for PFj in range(self.len_PC):
+						for PFij in range(self.len_PC):
+							agent.policytree[agent.unique_id][0][PFj][PFij] = truth_policytree[PFj][PFij]
+
+					# replacing the policy instruments impacts
+					for insj in range(self.len_ins_1 + self.len_ins_2 + self.len_ins_all):
+						agent.policytree[agent.unique_id][1][insj][0:self.len_S] = truth_policytree[self.len_PC+insj]
+		if SM_version == 2:  # paced update of the beliefs
+			for agent in self.schedule.agent_buffer(shuffled=True):
+				if isinstance(agent, ActiveAgent):
+					# replacing the policy family likelihoods
+					for PFj in range(self.len_PC):
+						for PFij in range(self.len_PC):
+							agent.policytree[agent.unique_id][0][PFj][PFij] += (truth_policytree[PFj][PFij] - agent.policytree[agent.unique_id][0][PFj][PFij]) * w_policy_update
+
+					# replacing the policy instruments impacts
+					for insj in range(self.len_ins_1 + self.len_ins_2 + self.len_ins_all):
+						for insk in range(len(truth_policytree[self.len_PC+insj])):
+							agent.policytree[agent.unique_id][1][insj][insk] += (truth_policytree[self.len_PC+insj][insk] - agent.policytree[agent.unique_id][1][insj][insk]) * w_policy_update
+				
+		# updating preferences
+		for agent in self.schedule.agent_buffer(shuffled=False):
 			if isinstance(agent, ActiveAgent):
-				# replacing the policy family likelihoods
-				for PFj in range(self.len_PC):
-					for PFij in range(self.len_PC):
-						# agent.policytree[agent.unique_id][PFj][PFij] = truth_policytree[PFj][PFij]
-						agent.policytree[agent.unique_id][0][PFj][PFij] = truth_policytree[PFj][PFij]
-
-				# replacing the policy instruments impacts
-				for insj in range(self.len_ins_1 + self.len_ins_2 + self.len_ins_all):
-					# agent.policytree[agent.unique_id][self.len_PC+insj][0:self.len_S] = truth_policytree[self.len_PC+insj]
-					agent.policytree[agent.unique_id][1][insj][0:self.len_S] = truth_policytree[self.len_PC+insj]
-
-				# replacing the issue beliefs from the KPIs
-				for issue in range(self.len_DC+self.len_PC+self.len_S):
-					agent.issuetree[agent.unique_id][issue][0] = truth_issuetree[issue]
 				agent.preference_update(agent, agent.unique_id)
 
 		# updating conflict levels
@@ -213,6 +261,11 @@ class PolicyEmergenceSM(Model):
 	def agenda_setting(self, SM_version):
 
 		'''
+		The agenda setting function
+        ===========================
+
+        This function is used to perform the agenda setting step.
+
 		The agenda setting step is the first step in the policy process conceptualised in this model. The steps are given as follows:
 		1. Active agents policy core issue selection
 		2. Active agents policy family selection
@@ -234,8 +287,10 @@ class PolicyEmergenceSM(Model):
 		# 3.
 		if SM_version >= 2: # SM+2 and higher
 			for agent in self.schedule.agent_buffer(shuffled=False):
-				if isinstance(agent, ActiveAgent):
-					agent.action_AS()
+				if isinstance(agent, ActiveAgent) and agent.focus_AS == 'i':
+					agent.action_AS_issue()
+				if isinstance(agent, ActiveAgent) and agent.focus_AS == 'p':
+					agent.action_AS_policy()
 
 		# 4. & 5.
 		for agent in self.schedule.agent_buffer(shuffled=False):
@@ -283,6 +338,11 @@ class PolicyEmergenceSM(Model):
 	def policy_formulation(self, SM_version):
 
 		'''
+		The policy formulation function
+        ===========================
+
+        This function is used to perform the policy formulation step.
+
 		The policy formulation step is the second step in the policy process conceptualised in this model. The steps are given as follows:
 		0. Detailing of policy instruments that can be considered
 		1. Active agents deep core issue selection
@@ -316,8 +376,10 @@ class PolicyEmergenceSM(Model):
 		# 3.
 		if SM_version >= 2: # SM+2 and higher
 			for agent in self.schedule.agent_buffer(shuffled=False):
-				if isinstance(agent, ActiveAgent):
-					agent.action_PF()
+				if isinstance(agent, ActiveAgent) and agent.selection_focus_PF == 'i':
+					agent.action_PF_issue()
+				if isinstance(agent, ActiveAgent) and agent.selection_focus_PF == 'p':
+					agent.action_PF_policy()
 
 		# 4. & 5.
 		for agent in self.schedule.agent_buffer(shuffled=False):
