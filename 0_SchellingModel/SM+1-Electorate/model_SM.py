@@ -3,6 +3,7 @@ from mesa.time import RandomActivation
 from mesa.space import SingleGrid
 from mesa.datacollection import DataCollector
 import numpy as np
+import copy
 
 from collections import defaultdict
 
@@ -19,7 +20,7 @@ def get_agents_attributes(model):
 	for agent in model.schedule.agent_buffer(shuffled=False):
 		if isinstance(agent, ActiveAgent):
 			_unique_id = agent.unique_id
-			agent_attributes.append([_unique_id, agent.agent_type, agent.affiliation, agent.selected_PC, agent.selected_PF, agent.selected_S, agent.selected_PI, agent.issuetree[_unique_id], agent.policytree[_unique_id]])
+			agent_attributes.append([_unique_id, agent.agent_type, agent.affiliation, copy.deepcopy(agent.selected_PC), copy.deepcopy(agent.selected_PF), copy.deepcopy(agent.selected_S), copy.deepcopy(agent.selected_PI), copy.deepcopy(agent.issuetree[_unique_id]), copy.deepcopy(agent.policytree[_unique_id])])
 
 	return agent_attributes
 
