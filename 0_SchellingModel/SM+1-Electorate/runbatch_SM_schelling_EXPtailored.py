@@ -295,7 +295,7 @@ for exp_i in range(3):
 			# output of the data
 			# Schelling model
 			output_Schelling_model = model_run_schelling.datacollector.get_model_vars_dataframe()
-			output_Schelling_model.to_csv('O_Sch_model_' + str(exp_i) + '_Sce' + str(sce_i) + '_Run' + str(rep_runs) + '.csv')
+			output_Schelling_model.to_csv('O_Sch_model_Exp' + str(exp_i) + '_Sce' + str(sce_i) + '_Run' + str(rep_runs) + '.csv')
 			# dataPlot_Schelling_agents = model_run_schelling.datacollector.get_agent_vars_dataframe()
 			# dataPlot_Schelling_agents.to_csv('O_Sch_agents_' + str(exp_i) + '_Sce' + str(sce_i) + '_Run' + str(rep_runs) + '.csv')  # agents are not needed a this point
 
@@ -303,4 +303,4 @@ for exp_i in range(3):
 			output_SM_model = model_run_SM.datacollector.get_model_vars_dataframe()
 			output_SM_model.to_csv('O_SM_model_Exp' + str(exp_i) + '_Sce' + str(sce_i) + '_Run' + str(rep_runs) + '.csv')
 			output_SM_agents = model_run_SM.datacollector.get_agent_vars_dataframe()
-			output_SM_agents.to_csv('O_SM_agents_' + str(exp_i) + '_Sce' + str(sce_i) + '_Run' + str(rep_runs) + '.csv')
+			output_SM_agents.to_csv('O_SM_agents_Exp' + str(exp_i) + '_Sce' + str(sce_i) + '_Run' + str(rep_runs) + '.csv')
