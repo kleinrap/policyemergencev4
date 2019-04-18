@@ -120,10 +120,10 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 			issuetree = copy.deepcopy(issuetree0)
 			# introducing the issues
 			for k in range(len_DC + len_PC + len_S):
-				issuetree[unique_id][k] = [0, goal_profiles[i][k+1], 0]
+				issuetree[unique_id][k] = [0, round(goal_profiles[i][k+1] + (random.random()/100),4), 0]
 			# introduction of the causal relations
 			for k in range(len_DC*len_PC + len_PC * len_S):
-				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = goal_profiles[i][len_DC + len_PC + len_S + k+1]
+				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = round(goal_profiles[i][len_DC + len_PC + len_S + k+1] + (random.random()/100), 4)
 			policytree = copy.deepcopy(policytree0)
 			conflictLevelIssue = copy.deepcopy(conflictLevelIssue0)
 			conflictLevelPolicy = copy.deepcopy(conflictLevelPolicy0)
@@ -148,10 +148,10 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 			issuetree = copy.deepcopy(issuetree0)
 			# introducing the issues
 			for k in range(len_DC + len_PC + len_S):
-				issuetree[unique_id][k] = [0, goal_profiles[i][k+1], 0]
+				issuetree[unique_id][k] = [0, round(goal_profiles[i][k+1] + (random.random()/100),4), 0]
 			# introduction of the causal relations
 			for k in range(len_DC*len_PC + len_PC * len_S):
-				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = goal_profiles[i][len_DC + len_PC + len_S + k+1]
+				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = round(goal_profiles[i][len_DC + len_PC + len_S + k+1] + (random.random()/100), 4)
 			policytree = copy.deepcopy(policytree0)
 			conflictLevelIssue = copy.deepcopy(conflictLevelIssue0)
 			conflictLevelPolicy = copy.deepcopy(conflictLevelPolicy0)
@@ -177,10 +177,10 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 			issuetree = copy.deepcopy(issuetree0)
 			# introducing the issues
 			for k in range(len_DC + len_PC + len_S):
-				issuetree[unique_id][k] = [0, goal_profiles[i][k+1], 0]
+				issuetree[unique_id][k] = [0, round(goal_profiles[i][k+1] + (random.random()/100), 4), 0]
 			# introduction of the causal relations
 			for k in range(len_DC*len_PC + len_PC * len_S):
-				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = goal_profiles[i][len_DC + len_PC + len_S + k+1]
+				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = round(goal_profiles[i][len_DC + len_PC + len_S + k+1] + (random.random()/100), 4)
 			policytree = copy.deepcopy(policytree0)
 			conflictLevelIssue = copy.deepcopy(conflictLevelIssue0)
 			conflictLevelPolicy = copy.deepcopy(conflictLevelPolicy0)
@@ -224,7 +224,7 @@ def init_electorate_agents(self, len_S, len_PC, len_DC, PE_inputs):
 	issuetree = copy.deepcopy(issuetree0)
 	# issue goals
 	for i in range(len_DC + len_PC + len_S):
-		issuetree[i] = goal_profiles[aff_number][i+1]
+		issuetree[i] = round(goal_profiles[aff_number][i+1] + (random.random()/100), 4)
 	agent = ElectorateAgent((x, y), unique_id, self, affiliation, issuetree, representativeness)
 	self.grid.position_agent(agent, (x, y))
 	self.schedule.add(agent)
@@ -238,7 +238,7 @@ def init_electorate_agents(self, len_S, len_PC, len_DC, PE_inputs):
 	issuetree = copy.deepcopy(issuetree0)
 	# issue goals
 	for i in range(len_DC + len_PC + len_S):
-		issuetree[i] = goal_profiles[aff_number+1][i+1]
+		issuetree[i] = round(goal_profiles[aff_number+1][i+1] + (random.random()/100), 4)
 	agent = ElectorateAgent((x, y), unique_id, self, affiliation, issuetree, representativeness)
 	self.grid.position_agent(agent, (x, y))
 	self.schedule.add(agent)
@@ -252,7 +252,7 @@ def init_electorate_agents(self, len_S, len_PC, len_DC, PE_inputs):
 		issuetree = copy.deepcopy(issuetree0)
 		# issue goals
 		for i in range(len_DC + len_PC + len_S):
-			issuetree[i] = goal_profiles[aff_number+2][i+1]
+			issuetree[i] = round(goal_profiles[aff_number+2][i+1] + (random.random()/100), 4)
 		agent = ElectorateAgent((x, y), unique_id, self, affiliation, issuetree, representativeness)
 		self.grid.position_agent(agent, (x, y))
 		self.schedule.add(agent)

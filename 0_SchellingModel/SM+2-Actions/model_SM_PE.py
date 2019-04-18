@@ -112,7 +112,7 @@ class PolicyEmergenceSM(Model):
 		self.numberOfAgents = self.schedule.get_agent_count()
 		self.datacollector.collect(self)
 
-	def step(self, SM_version, KPIs):
+	def step(self, SM_version, KPIs, action_param):
 		print(" ")
 		print("Step +1 - Policy emergence model")
 		print("Step count: ", self.stepCount)
@@ -137,11 +137,11 @@ class PolicyEmergenceSM(Model):
 			self.electorate_influence(self.w_el_influence)  # electorate influence action		
 
 		# 1.
-		self.agenda_setting(SM_version)
+		self.agenda_setting(SM_version, action_param)
 
 		# 2.
 		if self.policy_formulation_run:  # making sure first that an agenda has been created
-			self.policy_formulation(SM_version)
+			self.policy_formulation(SM_version, action_param)
 		else:  # otherwise, the status quo remains
 			self.policy_implemented = self.policy_instruments[-1]
 
@@ -259,7 +259,7 @@ class PolicyEmergenceSM(Model):
 			if isinstance(agent, ElectorateAgent):
 				agent.electorate_influence(w_el_influence)
 
-	def agenda_setting(self, SM_version):
+	def agenda_setting(self, SM_version, action_param):
 
 		'''
 		The agenda setting function
@@ -289,7 +289,7 @@ class PolicyEmergenceSM(Model):
 		if SM_version >= 2: # SM+2 and higher
 			for agent in self.schedule.agent_buffer(shuffled=False):
 				if isinstance(agent, ActiveAgent) and agent.focus_AS == 'i':
-					agent.action_AS_issue()
+					agent.action_AS_issue(action_param)
 				if isinstance(agent, ActiveAgent) and agent.focus_AS == 'p':
 					agent.action_AS_policy()
 
@@ -336,7 +336,7 @@ class PolicyEmergenceSM(Model):
 			self.policy_formulation_run = False
 			print("No agenda was formed, moving to the next step.")
 
-	def policy_formulation(self, SM_version):
+	def policy_formulation(self, SM_version, action_param):
 
 		'''
 		The policy formulation function
@@ -353,8 +353,6 @@ class PolicyEmergenceSM(Model):
 		5. Policy instrument selection
 
 		'''
-
-		print("Policy formulation being introduced")
 
 		# 0.
 		possible_PI = self.PF_indices[self.agenda_PF]
@@ -377,9 +375,9 @@ class PolicyEmergenceSM(Model):
 		# 3.
 		if SM_version >= 2: # SM+2 and higher
 			for agent in self.schedule.agent_buffer(shuffled=False):
-				if isinstance(agent, ActiveAgent) and agent.selection_focus_PF == 'i':
-					agent.action_PF_issue()
-				if isinstance(agent, ActiveAgent) and agent.selection_focus_PF == 'p':
+				if isinstance(agent, ActiveAgent) and agent.focus_PF == 'i':
+					agent.action_PF_issue(action_param)
+				if isinstance(agent, ActiveAgent) and agent.focus_PF == 'p':
 					agent.action_PF_policy()
 
 		# 4. & 5.

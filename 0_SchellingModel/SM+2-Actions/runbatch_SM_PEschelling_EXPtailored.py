@@ -49,13 +49,16 @@ PE_PEs = 4  # number of policy entrepreneurs
 PE_PEs_aff = [2, 2]  # policy entrepreneur distribution per affiliation
 PE_EPs = 2  # number of external parties
 PE_EPs_aff = [1, 1]  # external parties distribution per affiliation
-resources_aff = [75, 75]  # resources per affiliation agent out of 100
+resources_aff = [0.75, 0.75]  # resources per affiliation agent out of 100
 representativeness = [25, 75]  # electorate representativeness per affiliation
 goal_profiles_Be, goal_profiles_Af = goal_profiles(resources_aff)  # getting the goal profiles
 
 # SM+2 parameters
 # conflict level coefficient [low, medium, high]
 conflictLevel_coefficient = [0.75, 0.95, 0.85]
+actionWeight = 1  # used to calibrate the policy learning speed ... numbers above one mean higher policy learning speed
+resourcesWeight = 1/5  # helps define the number of actions the agents can make per step
+action_param = [actionWeight, resourcesWeight]
 
 # scenarios for the different runs
 def scenario():
@@ -230,7 +233,7 @@ def scenario():
 	# 		print(agent.agent_type, '\n', 'ID', agent.unique_id, 'Aff', agent.affiliation, agent.issuetree[agent.unique_id], '\n', agent.policytree[agent.unique_id])
 
 # running a number of experiments
-for exp_i in range(3):
+for exp_i in range(4):
 
 	# running a number of scenarios
 	for sce_i in range (3):
@@ -242,7 +245,7 @@ for exp_i in range(3):
 		for rep_runs in range(repetitions_runs):
 
 			# for tests and part runs
-			if exp_i == 0:
+			if exp_i == 3:
 
 				# initialisation of the Schelling model
 				model_run_schelling = Schelling(sch_height, sch_width, sch_density, sch_minority_pc, sch_homophilyType0, sch_homophilyType1, sch_movementQuota, sch_happyCheckRadius, sch_moveCheckRadius, sch_last_move_quota)
@@ -274,7 +277,7 @@ for exp_i in range(3):
 						KPIs = issue_mapping(IssueInit, type0agents, type1agents)
 					else:
 						KPIs = issue_mapping(KPIs, type0agents, type1agents)
-					policy_chosen = model_run_PE.step(SM_version, KPIs)
+					policy_chosen = model_run_PE.step(SM_version, KPIs, action_param)
 
 					# run of the segregation model for n ticks
 					for p in range(interval_tick):
