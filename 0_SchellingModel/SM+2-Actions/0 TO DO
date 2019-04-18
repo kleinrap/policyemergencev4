@@ -14,15 +14,16 @@ TO DO LIST
 	- Add new impact updated (SM+2+ only)
 
 2. Actions introduction
-	- Likelihood of performing an action
-	- Implementation of the action
-
-7. First full SM model runs
-	
-	- 
+	- Likelihood of performing an action (done)
+	- Implementation of the action (done)
+	- Add the weighted bonus for the PF for PM targeting (done)
 
 X. Checks:
 	- 
 
 Regarding the policy instruments:
 	- 
+
+Notes:
+- Currently, because the goal profiles are too similar, the agents all have the same conflict levels. In turn, this means that the actions they are performing are effectively random.
+- Look into the fact that most agents are always issue driven (especially in the policy formulation) because they have more 

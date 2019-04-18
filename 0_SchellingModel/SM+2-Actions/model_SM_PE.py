@@ -291,7 +291,7 @@ class PolicyEmergenceSM(Model):
 				if isinstance(agent, ActiveAgent) and agent.focus_AS == 'i':
 					agent.action_AS_issue(action_param)
 				if isinstance(agent, ActiveAgent) and agent.focus_AS == 'p':
-					agent.action_AS_policy()
+					agent.action_AS_policy(action_param)
 
 		# 4. & 5.
 		for agent in self.schedule.agent_buffer(shuffled=False):
@@ -378,7 +378,7 @@ class PolicyEmergenceSM(Model):
 				if isinstance(agent, ActiveAgent) and agent.focus_PF == 'i':
 					agent.action_PF_issue(action_param)
 				if isinstance(agent, ActiveAgent) and agent.focus_PF == 'p':
-					agent.action_PF_policy()
+					agent.action_PF_policy(action_param)
 
 		# 4. & 5.
 		for agent in self.schedule.agent_buffer(shuffled=False):

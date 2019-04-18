@@ -56,9 +56,10 @@ goal_profiles_Be, goal_profiles_Af = goal_profiles(resources_aff)  # getting the
 # SM+2 parameters
 # conflict level coefficient [low, medium, high]
 conflictLevel_coefficient = [0.75, 0.95, 0.85]
-actionWeight = 1  # used to calibrate the policy learning speed ... numbers above one mean higher policy learning speed
-resourcesWeight = 1/5  # helps define the number of actions the agents can make per step
-action_param = [actionWeight, resourcesWeight]
+weightAction = 1  # used to calibrate the policy learning speed ... numbers above one mean higher policy learning speed
+weightResources = 1/5  # helps define the number of actions the agents can make per step
+weightBonusPM = 1.05  # bonus when policy makers are targeted in the PF step
+action_param = [weightAction, weightResources, weightBonusPM]
 
 # scenarios for the different runs
 def scenario():

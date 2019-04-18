@@ -12,7 +12,7 @@ class ActiveAgent(Agent):
     def __init__(self, pos, unique_id, model, agent_type, resources, affiliation, issuetree, policytree, conflictLevelIssue, conflictLevelPolicy):
         
         '''
-         Args:
+        Args:
             unique_id: Unique identifier for the agent.
             x, y: Agent initial location.
             agent_type: Indicator for the agent's type (minority=1, majority=0)
@@ -269,8 +269,8 @@ class ActiveAgent(Agent):
         issue_number = len_DC + len_PC + len_S
 
 
-        actionWeight = action_param [0]
-        resourcesWeight = action_param[1]  # defines how many of the resources are spent per action
+        weightAction = action_param [0]
+        weightResources = action_param[1]  # defines how many of the resources are spent per action
         resources_action = self.resources
 
         # selection of the causal relation of interest
@@ -285,7 +285,7 @@ class ActiveAgent(Agent):
             ''' Calculation of the likelihood '''
             grade_list = []
             grade_list_agents = []
-            for agent in self.model.schedule.agent_buffer(shuffled=False):
+            for agent in self.model.schedule.agent_buffer(shuffled=True):
                 if isinstance(agent, ActiveAgent) and agent != self:
 
                     _unique_id = agent.unique_id
@@ -324,7 +324,7 @@ class ActiveAgent(Agent):
 
             ''' Implementation of the best action '''
             
-            for agent in self.model.schedule.agent_buffer(shuffled=False):
+            for agent in self.model.schedule.agent_buffer(shuffled=True):
                 # make sure to select the right agent onto which the actions is performed
                 if isinstance(agent, ActiveAgent) and agent == grade_list_agents[int(best_action_index/(len(cr_selec) + 2))]:
 
@@ -333,28 +333,128 @@ class ActiveAgent(Agent):
                     # framing influence action
                     if best_action < len(cr_selec):
                         cr_act = cr_selec[best_action]  # defining the causal relation
-                        agent.issuetree[_unique_id][cr_act][0] += (self.issuetree[self.unique_id][cr_act][0] - agent.issuetree[_unique_id][cr_act][0])  * self.resources * resourcesWeight * actionWeight
+                        agent.issuetree[_unique_id][cr_act][0] += (self.issuetree[self.unique_id][cr_act][0] - agent.issuetree[_unique_id][cr_act][0])  * self.resources * weightResources * weightAction
                         agent.issuetree[_unique_id][cr_act][0] = round(agent.issuetree[_unique_id][cr_act][0], 4)
 
                     # belief influence action
                     if best_action == len(cr_selec):
-                        agent.issuetree[_unique_id][len_DC+self.selected_PC][0] += (self.issuetree[self.unique_id][len_DC+self.selected_PC][0] - agent.issuetree[_unique_id][len_DC+self.selected_PC][0])  * self.resources * resourcesWeight * actionWeight
+                        agent.issuetree[_unique_id][len_DC+self.selected_PC][0] += (self.issuetree[self.unique_id][len_DC+self.selected_PC][0] - agent.issuetree[_unique_id][len_DC+self.selected_PC][0])  * self.resources * weightResources * weightAction
                         agent.issuetree[_unique_id][len_DC+self.selected_PC][0] = round(agent.issuetree[_unique_id][len_DC+self.selected_PC][0], 4)
 
                     # goal influence action
                     if best_action == len(cr_selec) + 1:
-                        agent.issuetree[_unique_id][len_DC+self.selected_PC][1] += (self.issuetree[self.unique_id][len_DC+self.selected_PC][1] - agent.issuetree[_unique_id][len_DC+self.selected_PC][1])  * self.resources * resourcesWeight * actionWeight
+                        agent.issuetree[_unique_id][len_DC+self.selected_PC][1] += (self.issuetree[self.unique_id][len_DC+self.selected_PC][1] - agent.issuetree[_unique_id][len_DC+self.selected_PC][1])  * self.resources * weightResources * weightAction
                         agent.issuetree[_unique_id][len_DC+self.selected_PC][1] = round(agent.issuetree[_unique_id][len_DC+self.selected_PC][1], 4)
 
                     # updating the conflict level after each action
                     self.model.conflictLevel_update_issue(self, agent)
             
             _iter += 1
-            resources_action -= self.resources * resourcesWeight
+            resources_action -= self.resources * weightResources
 
-    def action_AS_policy(self):
+    def action_AS_policy(self, action_param):
 
-        return 0
+        '''
+        The action function for policy focused agents in the agenda setting
+        ===========================
+
+        This function is used to calculate the likelihood of an agent performing an action and apply the selected action. This is for the policy focused agents in the agenda setting. The actions allowed are:
+        - (Likelihood influence 'lik') - Influence on the perceived likelihoods of the policy families
+        - (Goal influence 'goa') - Influence on the goals of the associated policy core issues
+        - (Belief influence 'bel') - Influence on the beliefs of the associated policy core issues
+
+        The action with the highest likelihood is selected.
+
+        Note: Full knolwedge is used in this function
+
+        '''
+
+        len_PF = self.model.len_PC
+        len_DC = self.model.len_DC
+        len_PC = self.model.len_PC
+        len_S = self.model.len_S
+        issue_number = len_DC + len_PC + len_S
+
+        weightAction = action_param [0]
+        weightResources = action_param[1]  # defines how many of the resources are spent per action
+        resources_action = self.resources
+
+        _iter = 0
+        while resources_action > 0.001:
+
+            ''' Calculation of the likelihood '''
+            grade_list = []
+            grade_list_agents = []
+            for agent in self.model.schedule.agent_buffer(shuffled=True):
+                if isinstance(agent, ActiveAgent) and agent != self:
+
+                    _unique_id = agent.unique_id
+                    grade_list_agents.append(agent)
+                            
+                    # grading all framing likelihood actions:
+                    for lik in range(len_PC):
+                        lik_grade = self.conflictLevelPolicy[_unique_id][0][self.selected_PF][lik]
+                        grade_list.append(round(lik_grade,4)) 
+
+                    # grading belief likelihood change
+                    for belief in range(len_PC):
+                        belief_grade = self.conflictLevelIssue[_unique_id][len_DC+belief][0]
+                        grade_list.append(round(belief_grade,4))
+
+                    # grading aim likelihood change
+                    for goal in range(len_PC):
+                        goal_grade = self.conflictLevelIssue[_unique_id][len_DC+goal][1]
+                        grade_list.append(round(belief_grade,4))
+
+            ''' Selection of the best action '''
+            # Check if several actions have the same grade
+            max_best_action = max(grade_list)
+            count = 0
+            count_max_list = []
+            for item in grade_list:
+                if item == max_best_action:
+                    count_max_list.append(count)  # storing the indexes of the grades
+                count += 1
+
+            if len(count_max_list) > 1: # if there are several grades at the max level, then choose randomly
+                best_action_index = random.choice(count_max_list)
+            else:  # if not, the best grade is the maximum
+                best_action_index = grade_list.index(max(grade_list))
+
+            # calculating the best action - 0,len_PC is likelihood, len_PC,2*len_PC is belief, 2*len_PC,3*len_PC is goal
+            best_action = best_action_index - (3*len_PC) * int(best_action_index/(3*len_PC))
+
+            ''' Implementation of the best action '''
+            
+            for agent in self.model.schedule.agent_buffer(shuffled=True):
+                # make sure to select the right agent onto which the actions is performed
+                if isinstance(agent, ActiveAgent) and agent == grade_list_agents[int(best_action_index/(3*len_PC))]:
+
+                    _unique_id = agent.unique_id
+
+                    # framing influence action
+                    if best_action < len_PC:
+                        PF_targ = best_action
+                        agent.policytree[_unique_id][0][self.selected_PF][PF_targ] += (self.policytree[self.unique_id][0][self.selected_PF][PF_targ] - agent.policytree[_unique_id][0][self.selected_PF][PF_targ])  * self.resources * weightResources * weightAction
+                        agent.policytree[_unique_id][0][self.selected_PF][PF_targ] = round(agent.policytree[_unique_id][0][self.selected_PF][PF_targ], 4)
+
+                    # belief influence action
+                    if best_action >= len_PC and best_action < 2*len_PC:
+                        PC_targ = best_action - len_PC
+                        agent.issuetree[_unique_id][len_DC+PC_targ][0] += (self.issuetree[self.unique_id][len_DC+PC_targ][0] - agent.issuetree[_unique_id][len_DC+PC_targ][0])  * self.resources * weightResources * weightAction
+                        agent.issuetree[_unique_id][len_DC+PC_targ][0] = round(agent.issuetree[_unique_id][len_DC+PC_targ][0], 4)
+
+                    # goal influence action
+                    if best_action >= 2*len_PC:
+                        PC_targ = best_action - 2*len_PC
+                        agent.issuetree[_unique_id][len_DC+PC_targ][1] += (self.issuetree[self.unique_id][len_DC+PC_targ][1] - agent.issuetree[_unique_id][len_DC+PC_targ][1])  * self.resources * weightResources * weightAction
+                        agent.issuetree[_unique_id][len_DC+PC_targ][1] = round(agent.issuetree[_unique_id][len_DC+PC_targ][1], 4)
+
+                    # updating the conflict level after each action
+                    self.model.conflictLevel_update_policy_PF(self, agent)
+            
+            _iter += 1
+            resources_action -= self.resources * weightResources
 
     def action_PF_issue(self, action_param):
 
@@ -379,8 +479,9 @@ class ActiveAgent(Agent):
         issue_number = len_DC + len_PC + len_S
 
 
-        actionWeight = action_param [0]
-        resourcesWeight = action_param[1]  # defines how many of the resources are spent per action
+        weightAction = action_param [0]
+        weightResources = action_param[1]  # defines how many of the resources are spent per action
+        weightBonusInit = action_param[2]
         resources_action = self.resources
 
         # selection of the causal relation of interest
@@ -395,23 +496,28 @@ class ActiveAgent(Agent):
             ''' Calculation of the likelihood '''
             grade_list = []
             grade_list_agents = []
-            for agent in self.model.schedule.agent_buffer(shuffled=False):
+            for agent in self.model.schedule.agent_buffer(shuffled=True):
                 if isinstance(agent, ActiveAgent) and agent != self:
+
+                    if agent.agent_type == 'policymaker':
+                        weightBonus = weightBonusInit
+                    else:
+                        weightBonus = 1
 
                     _unique_id = agent.unique_id
                     grade_list_agents.append(agent)
                             
                     # grading all framing likelihood actions:
                     for cr in cr_selec:
-                        cr_grade = self.conflictLevelIssue[_unique_id][cr][0]
+                        cr_grade = self.conflictLevelIssue[_unique_id][cr][0] * weightBonus
                         grade_list.append(round(cr_grade,4)) 
 
                     # grading belief likelihood change
-                    belief_grade = self.conflictLevelIssue[_unique_id][len_DC+len_PC+self.selected_S][0]
+                    belief_grade = self.conflictLevelIssue[_unique_id][len_DC+len_PC+self.selected_S][0] * weightBonus
                     grade_list.append(round(belief_grade,4))
 
                     # grading aim likelihood change
-                    goal_grade = self.conflictLevelIssue[_unique_id][len_DC+len_PC+self.selected_S][1]
+                    goal_grade = self.conflictLevelIssue[_unique_id][len_DC+len_PC+self.selected_S][1] * weightBonus
                     grade_list.append(round(goal_grade,4))
 
             ''' Selection of the best action '''
@@ -434,7 +540,7 @@ class ActiveAgent(Agent):
 
             ''' Implementation of the best action '''
             
-            for agent in self.model.schedule.agent_buffer(shuffled=False):
+            for agent in self.model.schedule.agent_buffer(shuffled=True):
                 # make sure to select the right agent onto which the actions is performed
                 if isinstance(agent, ActiveAgent) and agent == grade_list_agents[int(best_action_index/(len(cr_selec) + 2))]:
 
@@ -443,28 +549,135 @@ class ActiveAgent(Agent):
                     # framing influence action
                     if best_action < len(cr_selec):
                         cr_act = cr_selec[best_action]  # defining the causal relation
-                        agent.issuetree[_unique_id][cr_act][0] += (self.issuetree[self.unique_id][cr_act][0] - agent.issuetree[_unique_id][cr_act][0])  * self.resources * resourcesWeight * actionWeight
+                        agent.issuetree[_unique_id][cr_act][0] += (self.issuetree[self.unique_id][cr_act][0] - agent.issuetree[_unique_id][cr_act][0])  * self.resources * weightResources * weightAction
                         agent.issuetree[_unique_id][cr_act][0] = round(agent.issuetree[_unique_id][cr_act][0], 4)
 
                     # belief influence action
                     if best_action == len(cr_selec):
-                        agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][0] += (self.issuetree[self.unique_id][len_DC+len_PC+self.selected_S][0] - agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][0])  * self.resources * resourcesWeight * actionWeight
+                        agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][0] += (self.issuetree[self.unique_id][len_DC+len_PC+self.selected_S][0] - agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][0])  * self.resources * weightResources * weightAction
                         agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][0] = round(agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][0], 4)
 
                     # goal influence action
                     if best_action == len(cr_selec) + 1:
-                        agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][1] += (self.issuetree[self.unique_id][len_DC+len_PC+self.selected_S][1] - agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][1])  * self.resources * resourcesWeight * actionWeight
+                        agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][1] += (self.issuetree[self.unique_id][len_DC+len_PC+self.selected_S][1] - agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][1])  * self.resources * weightResources * weightAction
                         agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][1] = round(agent.issuetree[_unique_id][len_DC+len_PC+self.selected_S][1], 4)
 
                     # updating the conflict level after each action
                     self.model.conflictLevel_update_issue(self, agent)
             
             _iter += 1
-            resources_action -= self.resources * resourcesWeight
+            resources_action -= self.resources * weightResources
 
-    def action_PF_policy(self):
+    def action_PF_policy(self, action_param):
 
-        return 0 
+        '''
+        The action function for policy focused agents in the policy formulation
+        ===========================
+
+        This function is used to calculate the likelihood of an agent performing an action and apply the selected action. This is for the policy focused agents in the policy formulation. The actions allowed are:
+        - (Impact influence 'imp') - Influence on the perceived impact of the policy instruments
+        - (Goal influence 'goa') - Influence on the goals of the associated secondary issues
+        - (Belief influence 'bel') - Influence on the beliefs of the associated secondary issues
+
+        The action with the highest likelihood is selected.
+
+        Note: Full knolwedge is used in this function
+
+        '''
+
+        len_PF = self.model.len_PC
+        len_DC = self.model.len_DC
+        len_PC = self.model.len_PC
+        len_S = self.model.len_S
+        issue_number = len_DC + len_PC + len_S
+
+        weightAction = action_param [0]
+        weightResources = action_param[1]  # defines how many of the resources are spent per action
+        weightBonusInit = action_param[2]
+        resources_action = self.resources
+
+        _iter = 0
+        while resources_action > 0.001:
+
+            ''' Calculation of the likelihood '''
+            grade_list = []
+            grade_list_agents = []
+            for agent in self.model.schedule.agent_buffer(shuffled=True):
+                if isinstance(agent, ActiveAgent) and agent != self:
+
+                    if agent.agent_type == 'policymaker':
+                        weightBonus = weightBonusInit
+                    else:
+                        weightBonus = 1
+
+                    _unique_id = agent.unique_id
+                    grade_list_agents.append(agent)
+                            
+                    # grading all framing likelihood actions:
+                    for imp in range(len_S):
+                        imp_grade = self.conflictLevelPolicy[_unique_id][1][self.selected_PI][imp] * weightBonus
+                        grade_list.append(round(imp_grade,4)) 
+
+                    # grading belief likelihood change
+                    for belief in range(len_S):
+                        belief_grade = self.conflictLevelIssue[_unique_id][len_DC+len_PC+belief][0] * weightBonus
+                        grade_list.append(round(belief_grade,4))
+
+                    # grading aim likelihood change
+                    for goal in range(len_S):
+                        goal_grade = self.conflictLevelIssue[_unique_id][len_DC+len_PC+goal][1] * weightBonus
+                        grade_list.append(round(belief_grade,4))
+
+            ''' Selection of the best action '''
+            # Check if several actions have the same grade
+            max_best_action = max(grade_list)
+            count = 0
+            count_max_list = []
+            for item in grade_list:
+                if item == max_best_action:
+                    count_max_list.append(count)  # storing the indexes of the grades
+                count += 1
+
+            if len(count_max_list) > 1: # if there are several grades at the max level, then choose randomly
+                best_action_index = random.choice(count_max_list)
+            else:  # if not, the best grade is the maximum
+                best_action_index = grade_list.index(max(grade_list))
+
+            # calculating the best action - 0,len_S is impact, len_S,2*len_S is belief, 2*len_S,3*len_S is goal
+            best_action = best_action_index - (3*len_S) * int(best_action_index/(3*len_S))
+
+            ''' Implementation of the best action '''
+            
+            for agent in self.model.schedule.agent_buffer(shuffled=True):
+                # make sure to select the right agent onto which the actions is performed
+                if isinstance(agent, ActiveAgent) and agent == grade_list_agents[int(best_action_index/(3*len_S))]:
+
+                    _unique_id = agent.unique_id
+
+                    # framing influence action
+                    if best_action < len_S:
+                        PI_targ = best_action
+                        agent.policytree[_unique_id][1][self.selected_PI][PI_targ] += (self.policytree[self.unique_id][1][self.selected_PI][PI_targ] - agent.policytree[_unique_id][1][self.selected_PI][PI_targ])  * self.resources * weightResources * weightAction
+                        agent.policytree[_unique_id][1][self.selected_PI][PI_targ] = round(agent.policytree[_unique_id][1][self.selected_PI][PI_targ], 4)
+
+                    # belief influence action
+                    if best_action >= len_S and best_action < 2*len_S:
+                        S_targ = best_action - len_S
+                        agent.issuetree[_unique_id][len_DC+len_PC+S_targ][0] += (self.issuetree[self.unique_id][len_DC+len_PC+S_targ][0] - agent.issuetree[_unique_id][len_DC+len_PC+S_targ][0])  * self.resources * weightResources * weightAction
+                        agent.issuetree[_unique_id][len_DC+len_PC+S_targ][0] = round(agent.issuetree[_unique_id][len_DC+len_PC+S_targ][0], 4)
+
+                    # goal influence action
+                    if best_action >= 2*len_S:
+                        S_targ = best_action - 2*len_S
+                        agent.issuetree[_unique_id][len_DC+len_PC+S_targ][1] += (self.issuetree[self.unique_id][len_DC+len_PC+S_targ][1] - agent.issuetree[_unique_id][len_DC+len_PC+S_targ][1])  * self.resources * weightResources * weightAction
+                        agent.issuetree[_unique_id][len_DC+len_PC+S_targ][1] = round(agent.issuetree[_unique_id][len_DC+len_PC+S_targ][1], 4)
+
+                    # updating the conflict level after each action
+                    self.model.conflictLevel_update_policy_PI(self, agent)
+            
+            _iter += 1
+            resources_action -= self.resources * weightResources
+
 
 class ElectorateAgent(Agent):
     '''
@@ -501,7 +714,6 @@ class ElectorateAgent(Agent):
                 _unique_id = agent.unique_id
                 for issue in range(len_DC+len_PC+len_S):
                     agent.issuetree[_unique_id][issue][1] += (self.issuetree_elec[issue] - agent.issuetree[_unique_id][issue][1]) * w_el_influence * abs(agent.issuetree[_unique_id][issue][1] - agent.issuetree[_unique_id][issue][0])
-
 
 class TruthAgent(Agent):
     '''
