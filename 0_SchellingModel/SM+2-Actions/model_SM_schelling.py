@@ -227,6 +227,8 @@ class Schelling(Model):
             self.homophilyType1 += policy[4]
 
         # introduction of changes based on scenarios
+        if scenario_input == None:  # check
+            scenario_input = [None, None, None, None, None]
         # scenario_input = [happyCheckRadius, movementQuota, last_move_quota, homophilyType0, homophilyType1]
         if scenario_input[0] != None: # happyCheckRadius
             self.happyCheckRadius = scenario_input[0]

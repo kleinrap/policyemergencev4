@@ -206,7 +206,7 @@ class PolicyEmergenceSM(Model):
 				if isinstance(agent, ActiveAgent):
 					for issue in range(self.len_DC+self.len_PC+self.len_S):
 						agent.issuetree[agent.unique_id][issue][0] = truth_issuetree[issue]
-		if SM_version == 2:  # paced update of the beliefs
+		if SM_version >= 2:  # paced update of the beliefs
 			for agent in self.schedule.agent_buffer(shuffled=True):
 				if isinstance(agent, ActiveAgent):
 					for issue in range(self.len_DC+self.len_PC+self.len_S):
@@ -224,7 +224,7 @@ class PolicyEmergenceSM(Model):
 					# replacing the policy instruments impacts
 					for insj in range(self.len_ins_1 + self.len_ins_2 + self.len_ins_all):
 						agent.policytree[agent.unique_id][1][insj][0:self.len_S] = truth_policytree[self.len_PC+insj]
-		if SM_version == 2:  # paced update of the beliefs
+		if SM_version >= 2:  # paced update of the beliefs
 			for agent in self.schedule.agent_buffer(shuffled=True):
 				if isinstance(agent, ActiveAgent):
 					# replacing the policy family likelihoods
@@ -243,10 +243,11 @@ class PolicyEmergenceSM(Model):
 				agent.preference_update(agent, agent.unique_id)
 
 		# updating conflict levels
-		for agent in self.schedule.agent_buffer(shuffled=False):
-			for who in self.schedule.agent_buffer(shuffled=False):
-				if isinstance(agent, ActiveAgent) and isinstance(who, ActiveAgent):
-					agent.conflictLevel_update(agent, who)
+		if SM_version >= 2:
+			for agent in self.schedule.agent_buffer(shuffled=False):
+				for who in self.schedule.agent_buffer(shuffled=False):
+					if isinstance(agent, ActiveAgent) and isinstance(who, ActiveAgent):
+						agent.conflictLevel_update(agent, who)
 
 	def electorate_influence(self, w_el_influence):
 
@@ -367,10 +368,11 @@ class PolicyEmergenceSM(Model):
 					agent.selection_focus_PF()
 
 		# updating conflict levels
-		for agent in self.schedule.agent_buffer(shuffled=False):
-			for who in self.schedule.agent_buffer(shuffled=False):
-				if isinstance(agent, ActiveAgent) and isinstance(who, ActiveAgent):
-					self.conflictLevel_update_policy_PI(agent, who)
+		if SM_version >= 2:
+			for agent in self.schedule.agent_buffer(shuffled=False):
+				for who in self.schedule.agent_buffer(shuffled=False):
+					if isinstance(agent, ActiveAgent) and isinstance(who, ActiveAgent):
+						self.conflictLevel_update_policy_PI(agent, who)
 
 		# 3.
 		if SM_version >= 2: # SM+2 and higher

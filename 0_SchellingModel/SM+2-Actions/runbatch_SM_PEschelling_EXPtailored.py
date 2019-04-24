@@ -17,7 +17,7 @@ The architecture present here is to be used for performing experiments. A batch 
 
 ''' model version '''
 # 0 - SM, 1 - SM+1 electorate, 2 - SM+2 actions, 3 - SM+3 networks, 4 - SM+4 bounded, 5 - SM+5 coalitions
-SM_version = 2
+SM_version = 0
 
 # batch run parameters
 repetitions_runs = 5
@@ -51,7 +51,7 @@ PE_EPs = 2  # number of external parties
 PE_EPs_aff = [1, 1]  # external parties distribution per affiliation
 resources_aff = [0.75, 0.75]  # resources per affiliation agent out of 100
 representativeness = [25, 75]  # electorate representativeness per affiliation
-goal_profiles_Be, goal_profiles_Af = goal_profiles(resources_aff)  # getting the goal profiles
+# goal_profiles_Be, goal_profiles_Af = goal_profiles(resources_aff, SM_version)  # getting the goal profiles
 
 # SM+2 parameters
 # conflict level coefficient [low, medium, high]
@@ -60,6 +60,7 @@ weightAction = 1  # used to calibrate the policy learning speed ... numbers abov
 weightResources = 1/5  # helps define the number of actions the agents can make per step
 weightBonusPM = 1.05  # bonus when policy makers are targeted in the PF step
 action_param = [weightAction, weightResources, weightBonusPM]
+# scenario_input = [None, None, None, None, None] # setting for the Schelling scenarios by default
 
 # scenarios for the different runs (policy emergence model)
 def scenario_PE():
@@ -71,7 +72,7 @@ def scenario_PE():
 	One of the experiment is also included as it contains a change in the causal relations of the agents of affiliation 1 mid-simulation.
 	'''
 
-	simulation_midpoint = 15
+	simulation_midpoint = 0
 
 	# redefining the issue tree basics - hardcoded values for simplicity
 	issuetree_virgin = issuetree_creation(model_run_PE, model_run_PE.len_DC, model_run_PE.len_PC, model_run_PE.len_S, model_run_PE.len_CR)
@@ -96,12 +97,13 @@ def scenario_PE():
 					agent.affiliation = 1
 					for issue in range(7): # seven is hardcoded here - issue goals replacement
 						# changing the goals to the goals of the new affiliation
-						# goal_profiles[Experiment][affiliation][issue + 1]
-						agent.issuetree[_unique_id][issue][1] = goal_profiles_Af[exp_i][1][issue + 1]
+						# goal_profiles_Af[affiliation][issue + 1]
+						agent.issuetree[_unique_id][issue][1] = goal_profiles_Af[1][issue + 1]
 					change = False  # stop the for loop once one agent has been changed
 
 				# adapting the size of the issuetree and the policytree
 				if isinstance(agent, ActiveAgent):
+					agent_number = len(agent.issuetree)
 					for added_tree in range(2):  # number of added agents
 						agent.issuetree.append(issuetree_virgin)
 						agent.policytree.append(policytree_virgin)
@@ -118,7 +120,7 @@ def scenario_PE():
 			# adding two PEs to affiliation 0
 			x = 55
 			y = 55
-			unique_id = 10
+			unique_id = agent_number
 			for add_PEs in range(2):					
 				agent_type = 'policyentrepreneur'
 				affiliation = 0
@@ -127,16 +129,19 @@ def scenario_PE():
 				# introducing the issues
 				for issue in range(7): # seven is hardcoded here - caural relations replacement
 					# changing the goals to the goals of the new affiliation
-					# goal_profiles[Experiment][affiliation][issue + 1]
-					issuetree[unique_id][issue][1] = goal_profiles_Af[exp_i][affiliation][issue + 1]
+					# goal_profiles_Af[affiliation][issue + 1]
+					issuetree[unique_id][issue][1] = goal_profiles_Af[affiliation][issue + 1]
 				for CR in range(10): # ten is hardcoded here - issues replacement
-					# goal_profiles[Experiment][affiliation][issue + 1]
-					issuetree[unique_id][7 + CR][0] = goal_profiles_Af[exp_i][affiliation][7 + CR + 1]
+					# goal_profiles_Af[affiliation][issue + 1]
+					issuetree[unique_id][7 + CR][0] = goal_profiles_Af[affiliation][7 + CR + 1]
 
 				policytree = copy.deepcopy(_policytree_0)
 
-				agent = ActiveAgent((x, y), unique_id, model_run_PE, agent_type, resources, affiliation, issuetree, policytree)
-				model_run_PE.preference_update(agent, unique_id)  # updating the issue tree preferences
+				agent = ActiveAgent((x, y), unique_id, model_run_PE, agent_type, resources, affiliation, issuetree, policytree, 0, 0)
+				# agent.preference_update(agent, unique_id)  # updating the issue tree preferences
+				model_run_PE.preference_update_DC(agent, unique_id)
+				model_run_PE.preference_update_PC(agent, unique_id)
+				model_run_PE.preference_update_S(agent, unique_id)
 				model_run_PE.grid.position_agent(agent, (x, y))
 				model_run_PE.schedule.add(agent)
 
@@ -154,6 +159,7 @@ def scenario_PE():
 			for agent in model_run_PE.schedule.agent_buffer(shuffled=False):
 				# adapting the size of the issuetree and the policytree
 				if isinstance(agent, ActiveAgent):
+					agent_number = len(agent.issuetree)
 					for added_tree in range(2):  # number of added agents
 						agent.issuetree.append(issuetree_virgin)
 						agent.policytree.append(policytree_virgin)
@@ -166,11 +172,12 @@ def scenario_PE():
 					_policytree_0 = copy.deepcopy(agent.policytree)
 					_policytree_0[_unique_id] = _policytree_0[_unique_id + 1]  # making sure to reset the policy tree
 					obtained = False
+					print(len(_policytree_0))
 
 			# adding two PEs to affiliation 0
 			x = 55
 			y = 55
-			unique_id = 10
+			unique_id = agent_number
 			for add_PEs in range(2):					
 				agent_type = 'policyentrepreneur'
 				affiliation = 1
@@ -179,16 +186,19 @@ def scenario_PE():
 				# introducing the issues
 				for issue in range(7): # seven is hardcoded here - caural relations replacement
 					# changing the goals to the goals of the new affiliation
-					# goal_profiles_Af[Experiment][affiliation][issue + 1]
-					issuetree[unique_id][issue][1] = goal_profiles_Af[exp_i][affiliation][issue + 1]
+					# goal_profiles_Af[affiliation][issue + 1]
+					issuetree[unique_id][issue][1] = goal_profiles_Af[affiliation][issue + 1]
 				for CR in range(10): # ten is hardcoded here - issues replacement
-					# goal_profiles_Af[Experiment][affiliation][issue + 1]
-					issuetree[unique_id][7 + CR][0] = goal_profiles_Af[exp_i][affiliation][7 + CR + 1]
+					# goal_profiles_Af[affiliation][issue + 1]
+					issuetree[unique_id][7 + CR][0] = goal_profiles_Af[affiliation][7 + CR + 1]
 
 				policytree = copy.deepcopy(_policytree_0)
 
-				agent = ActiveAgent((x, y), unique_id, model_run_PE, agent_type, resources, affiliation, issuetree, policytree)
-				model_run_PE.preference_update(agent, unique_id)  # updating the issue tree preferences
+				agent = ActiveAgent((x, y), unique_id, model_run_PE, agent_type, resources, affiliation, issuetree, policytree, 0, 0)
+				# agent.preference_update(agent, unique_id)  # updating the issue tree preferences
+				model_run_PE.preference_update_DC(agent, unique_id)
+				model_run_PE.preference_update_PC(agent, unique_id)
+				model_run_PE.preference_update_S(agent, unique_id)
 				model_run_PE.grid.position_agent(agent, (x, y))
 				model_run_PE.schedule.add(agent)
 
@@ -211,8 +221,8 @@ def scenario_PE():
 					agent.affiliation = 1
 					for issue in range(7): # seven is hardcoded here - issue goals replacement
 						# changing the goals to the goals of the new affiliation
-						# goal_profiles_Af[Experiment][affiliation][issue + 1]
-						agent.issuetree[_unique_id][issue][1] = goal_profiles_Af[exp_i][1][issue + 1]
+						# goal_profiles_Af[affiliation][issue + 1]
+						agent.issuetree[_unique_id][issue][1] = goal_profiles_Af[1][issue + 1]
 					change = False  # stop the for loop once one agent has been changed
 
 		if i == simulation_midpoint and exp_i == 2:
@@ -226,8 +236,8 @@ def scenario_PE():
 				if isinstance(agent, ActiveAgent) and agent.affiliation == 1:
 					_unique_id = agent.unique_id
 					for CR in range(10): # ten is hardcoded here - issues replacement
-						# goal_profiles_Af[Experiment][affiliation][issue + 1]
-						agent.issuetree[_unique_id][7 + CR][0] = goal_profiles_Af[exp_i][1][7 + CR + 1]
+						# goal_profiles_Af[affiliation][issue + 1]
+						agent.issuetree[_unique_id][7 + CR][0] = goal_profiles_Af[1][7 + CR + 1]
 
 # scenarios for the different runs (schelling model)
 def scenario_Sch():
@@ -267,14 +277,17 @@ for exp_i in range(4):
 	# running a number of scenarios
 	for sce_i in range (3):
 
+		# importing the goal profiles
+		goal_profiles_Be, goal_profiles_Af = goal_profiles(resources_aff, exp_i, SM_version)  # getting the goal profiles
+
 		# creating the agents for the policy emergence model
-		PE_inputs = [PE_PMs, PE_PMs_aff, PE_PEs, PE_PEs_aff, PE_EPs, PE_EPs_aff, resources_aff, representativeness, goal_profiles_Be[exp_i], conflictLevel_coefficient]
+		PE_inputs = [PE_PMs, PE_PMs_aff, PE_PEs, PE_PEs_aff, PE_EPs, PE_EPs_aff, resources_aff, representativeness, goal_profiles_Be, conflictLevel_coefficient]
 
 		# running a number of repetitions per experiment
 		for rep_runs in range(repetitions_runs):
 
 			# for tests and part runs
-			if exp_i > 0:
+			if sce_i == 0:
 
 				# initialisation of the Schelling model
 				model_run_schelling = Schelling(sch_height, sch_width, sch_density, sch_minority_pc, sch_homophilyType0, sch_homophilyType1, sch_movementQuota, sch_happyCheckRadius, sch_moveCheckRadius, sch_last_move_quota)
