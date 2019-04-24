@@ -190,7 +190,7 @@ class Schelling(Model):
         self.datacollector.collect(self)
 
 
-    def step(self, policy):
+    def step(self, policy, scenario_input):
         '''
         Run one step of the model. If All agents are happy, halt the model.
         Note on the eveness paramater calculation:
@@ -206,6 +206,8 @@ class Schelling(Model):
         self.movement = 0  # Reset counter of movement of agents
         self.movementtype0 = 0  # Reset counter of movement of type 0 agents
         self.movementtype1 = 0  # Reset counter of movement of type 1 agents
+
+
 
         # introduction of the selected policy in the Schelling model
         # happy check vision changes
@@ -223,6 +225,19 @@ class Schelling(Model):
         # type 1 preference
         if policy[4] != None and self.homophilyType1<1 and self.homophilyType1>0:
             self.homophilyType1 += policy[4]
+
+        # introduction of changes based on scenarios
+        # scenario_input = [happyCheckRadius, movementQuota, last_move_quota, homophilyType0, homophilyType1]
+        if scenario_input[0] != None: # happyCheckRadius
+            self.happyCheckRadius = scenario_input[0]
+        if scenario_input[1] != None: # movementQuota
+            self.movementQuota = scenario_input[1]
+        if scenario_input[2] != None: # last_move_quota
+            self.last_move_quota = scenario_input[2]
+        if scenario_input[3] != None: # homophilyType0
+            self.homophilyType0 = scenario_input[3]
+        if scenario_input[4] != None: # homophilyType1
+            self.homophilyType1 = scenario_input[4]
 
         # run the step for the agents
         self.schedule.step()

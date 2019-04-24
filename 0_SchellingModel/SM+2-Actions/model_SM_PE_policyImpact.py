@@ -19,7 +19,8 @@ def model_simulation(inputs):
 
 	# run the simulation with policy introduced and collect data
 	for k in range(interval_tick):
-		IssueE, type0agents, type1agents = model_run_schelling_PI_test.step(policy)
+		scenario_input = [None, None, None, None, None]
+		IssueE, type0agents, type1agents = model_run_schelling_PI_test.step(policy, scenario_input)
 		policy = [None for f in range(len(policy))]  # reset policy vector after it has been implemented once
 
 	return [IssueE, type0agents, type1agents]
