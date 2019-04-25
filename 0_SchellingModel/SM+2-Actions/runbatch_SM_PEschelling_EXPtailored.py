@@ -17,11 +17,13 @@ The architecture present here is to be used for performing experiments. A batch 
 
 ''' model version '''
 # 0 - SM, 1 - SM+1 electorate, 2 - SM+2 actions, 3 - SM+3 networks, 4 - SM+4 bounded, 5 - SM+5 coalitions
-SM_version = 0
+SM_version = 2
 
 # batch run parameters
-repetitions_runs = 5
-exp_number = 0
+repetitions_runs = 50
+exp_number = 1
+sce_number = 2
+
 
 ''' general running parameters '''
 total_ticks = 155
@@ -49,7 +51,7 @@ PE_PEs = 4  # number of policy entrepreneurs
 PE_PEs_aff = [2, 2]  # policy entrepreneur distribution per affiliation
 PE_EPs = 2  # number of external parties
 PE_EPs_aff = [1, 1]  # external parties distribution per affiliation
-resources_aff = [0.75, 0.75]  # resources per affiliation agent out of 100
+resources_aff = [0.75, 0.75]  # resources per affiliation agent out of 1
 representativeness = [25, 75]  # electorate representativeness per affiliation
 # goal_profiles_Be, goal_profiles_Af = goal_profiles(resources_aff, SM_version)  # getting the goal profiles
 
@@ -62,8 +64,8 @@ weightBonusPM = 1.05  # bonus when policy makers are targeted in the PF step
 action_param = [weightAction, weightResources, weightBonusPM]
 # scenario_input = [None, None, None, None, None] # setting for the Schelling scenarios by default
 
-# scenarios for the different runs (policy emergence model)
-def scenario_PE():
+# scenarios for the different runs (policy emergence model) - mid point changes
+def scenario_PE_mid():
 
 	'''
 	Below are all the changes related to the SCENARIOS AND EXPERIMENTS for the policy emergence model
@@ -72,7 +74,7 @@ def scenario_PE():
 	One of the experiment is also included as it contains a change in the causal relations of the agents of affiliation 1 mid-simulation.
 	'''
 
-	simulation_midpoint = 0
+	simulation_midpoint = 15
 
 	# redefining the issue tree basics - hardcoded values for simplicity
 	issuetree_virgin = issuetree_creation(model_run_PE, model_run_PE.len_DC, model_run_PE.len_PC, model_run_PE.len_S, model_run_PE.len_CR)
@@ -239,6 +241,37 @@ def scenario_PE():
 						# goal_profiles_Af[affiliation][issue + 1]
 						agent.issuetree[_unique_id][7 + CR][0] = goal_profiles_Af[1][7 + CR + 1]
 
+# scenarios for the different runs (policy emergence model) - initial settings
+def scenario_PE_start():
+
+	'''
+	Below are all the experiment related inputs for the policy emergence model
+	'''
+
+	resources_aff = [0.75, 0.75]  # resources per affiliation agent out of 1
+	goal_profiles_Be, goal_profiles_Af = goal_profiles(resources_aff, exp_i, SM_version)  # getting the goal profiles
+
+	# per version changes
+	if SM_version == 2:
+
+		if sce_i == 0:
+			'''
+			Scenario 0 - Resource distribution
+			- Equal resources
+			'''
+
+			resources_aff = [0.75, 0.75]  # resources per affiliation agent out of 1
+
+		if sce_i == 1:
+			'''
+			Scenario 1 - Resource distribution
+			- Affiliation 1 with more resources
+			'''
+
+			resources_aff = [0.75, 1]  # resources per affiliation agent out of 1
+
+	return resources_aff, goal_profiles_Be, goal_profiles_Af
+
 # scenarios for the different runs (schelling model)
 def scenario_Sch():
 
@@ -272,13 +305,13 @@ def scenario_Sch():
 	# 		print(agent.agent_type, '\n', 'ID', agent.unique_id, 'Aff', agent.affiliation, agent.issuetree[agent.unique_id], '\n', agent.policytree[agent.unique_id])
 
 # running a number of experiments
-for exp_i in range(4):
+for exp_i in range(exp_number):
 
 	# running a number of scenarios
-	for sce_i in range (3):
+	for sce_i in range (sce_number):
 
-		# importing the goal profiles
-		goal_profiles_Be, goal_profiles_Af = goal_profiles(resources_aff, exp_i, SM_version)  # getting the goal profiles
+		# initialising scenarios
+		resources_aff, goal_profiles_Be, goal_profiles_Af = scenario_PE_start()
 
 		# creating the agents for the policy emergence model
 		PE_inputs = [PE_PMs, PE_PMs_aff, PE_PEs, PE_PEs_aff, PE_EPs, PE_EPs_aff, resources_aff, representativeness, goal_profiles_Be, conflictLevel_coefficient]
@@ -287,7 +320,7 @@ for exp_i in range(4):
 		for rep_runs in range(repetitions_runs):
 
 			# for tests and part runs
-			if sce_i == 0:
+			if sce_i >= 0:
 
 				# initialisation of the Schelling model
 				model_run_schelling = Schelling(sch_height, sch_width, sch_density, sch_minority_pc, sch_homophilyType0, sch_homophilyType1, sch_movementQuota, sch_happyCheckRadius, sch_moveCheckRadius, sch_last_move_quota)
@@ -332,7 +365,7 @@ for exp_i in range(4):
 						policy_chosen = [None for ite in range(len(model_run_PE.policy_instruments[0]))] # reset policy after it has been implemented once
 
 					# running the different scenarios
-					scenario_PE()
+					scenario_PE_mid()
 
 				# output of the data
 				# Schelling model

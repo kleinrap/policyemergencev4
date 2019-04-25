@@ -481,7 +481,7 @@ class ActiveAgent(Agent):
 
         weightAction = action_param [0]
         weightResources = action_param[1]  # defines how many of the resources are spent per action
-        weightBonusInit = action_param[2]
+        weightBonusPM = action_param[2]
         resources_action = self.resources
 
         # selection of the causal relation of interest
@@ -500,7 +500,7 @@ class ActiveAgent(Agent):
                 if isinstance(agent, ActiveAgent) and agent != self:
 
                     if agent.agent_type == 'policymaker':
-                        weightBonus = weightBonusInit
+                        weightBonus = weightBonusPM
                     else:
                         weightBonus = 1
 
@@ -593,7 +593,7 @@ class ActiveAgent(Agent):
 
         weightAction = action_param [0]
         weightResources = action_param[1]  # defines how many of the resources are spent per action
-        weightBonusInit = action_param[2]
+        weightBonusPM = action_param[2]
         resources_action = self.resources
 
         _iter = 0
@@ -606,7 +606,7 @@ class ActiveAgent(Agent):
                 if isinstance(agent, ActiveAgent) and agent != self:
 
                     if agent.agent_type == 'policymaker':
-                        weightBonus = weightBonusInit
+                        weightBonus = weightBonusPM
                     else:
                         weightBonus = 1
 
