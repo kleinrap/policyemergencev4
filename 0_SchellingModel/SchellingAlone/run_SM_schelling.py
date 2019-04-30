@@ -15,23 +15,34 @@ Ultimately, the two models should be initialised and then their for loops should
 # 1 - policy emergence alone
 # 2 - segregation alone
 # 3 - both
-run_type = 3
+run_type = 2
 
 if run_type == 1:
 	# running the policy emergence Simplest Model
 	model_run_SM = PolicyEmergenceSM(10,10)
 
 	for i in range(5):
-		model_run_SM.step()
+		policy_chosen = [None for ite in range(5)]
+		model_run_SM.step(policy_chosen)
 
 if run_type == 2:
 	# running the Schelling model:
 	model_run_schelling = Schelling(20, 20, 0.75, 0.4)
 
-	for i in range(25):
+	for i in range(150):
 		if model_run_schelling.happy != model_run_schelling.schedule.get_agent_count():
 			print("Step: ", i)
-			model_run_schelling.step()
+			policy_chosen = [None for ite in range(5)]
+			model_run_schelling.step(policy_chosen)
+
+	# printing the data obtained from the Schelling model
+	dataPlot_Schelling = model_run_schelling.datacollector.get_model_vars_dataframe()
+	print(dataPlot_Schelling)
+	dataPlot_Schelling.plot("step", "evenness")
+	dataPlot_Schelling.plot("step", ["happy", "happytype0", "happytype1"])
+	dataPlot_Schelling.plot("step", ["movement", "movementtype0", "movementtype1"])
+
+	plt.show()
 
 if run_type == 3:
 

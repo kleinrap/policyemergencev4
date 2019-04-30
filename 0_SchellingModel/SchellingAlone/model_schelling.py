@@ -125,8 +125,19 @@ class Schelling(Model):
     This class has been modified from the original mesa Schelling model.
     '''
 
-    def __init__(self, height=20, width=20, density=0.8, minority_pc=0.2, homophilyType0=0.5, homophilyType1=0.5, movementQuota=0.30, happyCheckRadius=5, moveCheckRadius=10, last_move_quota=5):
+    def __init__(self, height=20, width=20, density=0.8, minority_pc=0.4, homophilyType0=0.7, homophilyType1=0.5, movementQuota=0.30, happyCheckRadius=5, moveCheckRadius=10, last_move_quota=5):
         '''
+        height of the grid: 20
+        width of the grid: 20
+        density of agents on the grid: 0.8 (%)
+        minority agent proportion: 0.4 (%)
+        homophily type 0: 0.7 (%)
+        homophily type 1: 0.5 (%)
+        movement quota (total amount of agents allowed to move per tick): 0.30 (%)
+        happiness check radius: 5
+        movement check radius: 10
+        last movement quota (amount of ticks before can move again): 5
+
         '''
 
         self.height = height

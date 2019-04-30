@@ -17,12 +17,12 @@ The architecture present here is to be used for performing experiments. A batch 
 
 ''' model version '''
 # 0 - SM, 1 - SM+1 electorate, 2 - SM+2 actions, 3 - SM+3 networks, 4 - SM+4 bounded, 5 - SM+5 coalitions
-SM_version = 2
+SM_version = 0
 
 # batch run parameters
 repetitions_runs = 50
 exp_number = 1
-sce_number = 2
+sce_number = 1
 
 
 ''' general running parameters '''
@@ -65,181 +65,181 @@ action_param = [weightAction, weightResources, weightBonusPM]
 # scenario_input = [None, None, None, None, None] # setting for the Schelling scenarios by default
 
 # scenarios for the different runs (policy emergence model) - mid point changes
-def scenario_PE_mid():
+# def scenario_PE_mid():
 
-	'''
-	Below are all the changes related to the SCENARIOS AND EXPERIMENTS for the policy emergence model
-	These changes are happening at the midway point of the simulation.
-	Three scenarios are being considered. The details are provided in the formalisation report.
-	One of the experiment is also included as it contains a change in the causal relations of the agents of affiliation 1 mid-simulation.
-	'''
+# 	'''
+# 	Below are all the changes related to the SCENARIOS AND EXPERIMENTS for the policy emergence model
+# 	These changes are happening at the midway point of the simulation.
+# 	Three scenarios are being considered. The details are provided in the formalisation report.
+# 	One of the experiment is also included as it contains a change in the causal relations of the agents of affiliation 1 mid-simulation.
+# 	'''
 
-	simulation_midpoint = 15
+# 	simulation_midpoint = 15
 
-	# redefining the issue tree basics - hardcoded values for simplicity
-	issuetree_virgin = issuetree_creation(model_run_PE, model_run_PE.len_DC, model_run_PE.len_PC, model_run_PE.len_S, model_run_PE.len_CR)
-	policytree_virgin = policytree_creation(model_run_PE, model_run_PE.len_PC, model_run_PE.len_S, model_run_PE.len_PC, model_run_PE.len_ins_1, model_run_PE.len_ins_2, model_run_PE.len_ins_all)
+# 	# redefining the issue tree basics - hardcoded values for simplicity
+# 	issuetree_virgin = issuetree_creation(model_run_PE, model_run_PE.len_DC, model_run_PE.len_PC, model_run_PE.len_S, model_run_PE.len_CR)
+# 	policytree_virgin = policytree_creation(model_run_PE, model_run_PE.len_PC, model_run_PE.len_S, model_run_PE.len_PC, model_run_PE.len_ins_1, model_run_PE.len_ins_2, model_run_PE.len_ins_all)
 
-	if SM_version == 0:
+# 	if SM_version == 0:
 
-		if i == simulation_midpoint and sce_i == 0:
-			'''
-			Scenario 0 - Changes
-			- One PM from affiliation 0 to 1 with corresponding goal changes
-			- Two PEs added to affiliation 0 with corresponding goals
-			'''
+# 		if i == simulation_midpoint and sce_i == 0:
+# 			'''
+# 			Scenario 0 - Changes
+# 			- One PM from affiliation 0 to 1 with corresponding goal changes
+# 			- Two PEs added to affiliation 0 with corresponding goals
+# 			'''
 
-			change = True
-			obtained = True
-			for agent in model_run_PE.schedule.agent_buffer(shuffled=False):
-				# changing the policy maker
-				if isinstance(agent, ActiveAgent) and agent.agent_type == 'policymaker' and agent.affiliation == 0 and change == True:
-					_unique_id = agent.unique_id
+# 			change = True
+# 			obtained = True
+# 			for agent in model_run_PE.schedule.agent_buffer(shuffled=False):
+# 				# changing the policy maker
+# 				if isinstance(agent, ActiveAgent) and agent.agent_type == 'policymaker' and agent.affiliation == 0 and change == True:
+# 					_unique_id = agent.unique_id
 					
-					agent.affiliation = 1
-					for issue in range(7): # seven is hardcoded here - issue goals replacement
-						# changing the goals to the goals of the new affiliation
-						# goal_profiles_Af[affiliation][issue + 1]
-						agent.issuetree[_unique_id][issue][1] = goal_profiles_Af[1][issue + 1]
-					change = False  # stop the for loop once one agent has been changed
+# 					agent.affiliation = 1
+# 					for issue in range(7): # seven is hardcoded here - issue goals replacement
+# 						# changing the goals to the goals of the new affiliation
+# 						# goal_profiles_Af[affiliation][issue + 1]
+# 						agent.issuetree[_unique_id][issue][1] = goal_profiles_Af[1][issue + 1]
+# 					change = False  # stop the for loop once one agent has been changed
 
-				# adapting the size of the issuetree and the policytree
-				if isinstance(agent, ActiveAgent):
-					agent_number = len(agent.issuetree)
-					for added_tree in range(2):  # number of added agents
-						agent.issuetree.append(issuetree_virgin)
-						agent.policytree.append(policytree_virgin)
+# 				# adapting the size of the issuetree and the policytree
+# 				if isinstance(agent, ActiveAgent):
+# 					agent_number = len(agent.issuetree)
+# 					for added_tree in range(2):  # number of added agents
+# 						agent.issuetree.append(issuetree_virgin)
+# 						agent.policytree.append(policytree_virgin)
 
-				# obtaining the issue tree for thepolicy entrepreneur
-				if isinstance(agent, ActiveAgent) and agent.affiliation == 0 and obtained == True:
-					_unique_id = copy.deepcopy(agent.unique_id)
-					_issuetree_0 = copy.deepcopy(agent.issuetree)
-					_issuetree_0[_unique_id] = _issuetree_0[_unique_id + 1]  # making sure to reset the issue tree
-					_policytree_0 = copy.deepcopy(agent.policytree)
-					_policytree_0[_unique_id] = _policytree_0[_unique_id + 1]  # making sure to reset the policy tree
-					obtained = False
+# 				# obtaining the issue tree for thepolicy entrepreneur
+# 				if isinstance(agent, ActiveAgent) and agent.affiliation == 0 and obtained == True:
+# 					_unique_id = copy.deepcopy(agent.unique_id)
+# 					_issuetree_0 = copy.deepcopy(agent.issuetree)
+# 					_issuetree_0[_unique_id] = _issuetree_0[_unique_id + 1]  # making sure to reset the issue tree
+# 					_policytree_0 = copy.deepcopy(agent.policytree)
+# 					_policytree_0[_unique_id] = _policytree_0[_unique_id + 1]  # making sure to reset the policy tree
+# 					obtained = False
 
-			# adding two PEs to affiliation 0
-			x = 55
-			y = 55
-			unique_id = agent_number
-			for add_PEs in range(2):					
-				agent_type = 'policyentrepreneur'
-				affiliation = 0
-				resources = 0  # not important for this model
-				issuetree = copy.deepcopy(_issuetree_0)
-				# introducing the issues
-				for issue in range(7): # seven is hardcoded here - caural relations replacement
-					# changing the goals to the goals of the new affiliation
-					# goal_profiles_Af[affiliation][issue + 1]
-					issuetree[unique_id][issue][1] = goal_profiles_Af[affiliation][issue + 1]
-				for CR in range(10): # ten is hardcoded here - issues replacement
-					# goal_profiles_Af[affiliation][issue + 1]
-					issuetree[unique_id][7 + CR][0] = goal_profiles_Af[affiliation][7 + CR + 1]
+# 			# adding two PEs to affiliation 0
+# 			x = 55
+# 			y = 55
+# 			unique_id = agent_number
+# 			for add_PEs in range(2):					
+# 				agent_type = 'policyentrepreneur'
+# 				affiliation = 0
+# 				resources = 0  # not important for this model
+# 				issuetree = copy.deepcopy(_issuetree_0)
+# 				# introducing the issues
+# 				for issue in range(7): # seven is hardcoded here - caural relations replacement
+# 					# changing the goals to the goals of the new affiliation
+# 					# goal_profiles_Af[affiliation][issue + 1]
+# 					issuetree[unique_id][issue][1] = goal_profiles_Af[affiliation][issue + 1]
+# 				for CR in range(10): # ten is hardcoded here - issues replacement
+# 					# goal_profiles_Af[affiliation][issue + 1]
+# 					issuetree[unique_id][7 + CR][0] = goal_profiles_Af[affiliation][7 + CR + 1]
 
-				policytree = copy.deepcopy(_policytree_0)
+# 				policytree = copy.deepcopy(_policytree_0)
 
-				agent = ActiveAgent((x, y), unique_id, model_run_PE, agent_type, resources, affiliation, issuetree, policytree, 0, 0)
-				# agent.preference_update(agent, unique_id)  # updating the issue tree preferences
-				model_run_PE.preference_update_DC(agent, unique_id)
-				model_run_PE.preference_update_PC(agent, unique_id)
-				model_run_PE.preference_update_S(agent, unique_id)
-				model_run_PE.grid.position_agent(agent, (x, y))
-				model_run_PE.schedule.add(agent)
+# 				agent = ActiveAgent((x, y), unique_id, model_run_PE, agent_type, resources, affiliation, issuetree, policytree, 0, 0)
+# 				# agent.preference_update(agent, unique_id)  # updating the issue tree preferences
+# 				model_run_PE.preference_update_DC(agent, unique_id)
+# 				model_run_PE.preference_update_PC(agent, unique_id)
+# 				model_run_PE.preference_update_S(agent, unique_id)
+# 				model_run_PE.grid.position_agent(agent, (x, y))
+# 				model_run_PE.schedule.add(agent)
 
-				# update of the standard inputs
-				y += 1
-				unique_id += 1
+# 				# update of the standard inputs
+# 				y += 1
+# 				unique_id += 1
 			
-		if i == simulation_midpoint and sce_i == 1:
-			'''
-			Scenario 1 - Changes
-			- Two PEs added to affiliation 1 with corresondping goals
-			'''
+# 		if i == simulation_midpoint and sce_i == 1:
+# 			'''
+# 			Scenario 1 - Changes
+# 			- Two PEs added to affiliation 1 with corresondping goals
+# 			'''
 
-			obtained = True
-			for agent in model_run_PE.schedule.agent_buffer(shuffled=False):
-				# adapting the size of the issuetree and the policytree
-				if isinstance(agent, ActiveAgent):
-					agent_number = len(agent.issuetree)
-					for added_tree in range(2):  # number of added agents
-						agent.issuetree.append(issuetree_virgin)
-						agent.policytree.append(policytree_virgin)
+# 			obtained = True
+# 			for agent in model_run_PE.schedule.agent_buffer(shuffled=False):
+# 				# adapting the size of the issuetree and the policytree
+# 				if isinstance(agent, ActiveAgent):
+# 					agent_number = len(agent.issuetree)
+# 					for added_tree in range(2):  # number of added agents
+# 						agent.issuetree.append(issuetree_virgin)
+# 						agent.policytree.append(policytree_virgin)
 
-				# obtaining the issue tree for thepolicy entrepreneur
-				if isinstance(agent, ActiveAgent) and agent.affiliation == 1 and obtained == True:
-					_unique_id = copy.deepcopy(agent.unique_id)
-					_issuetree_0 = copy.deepcopy(agent.issuetree)
-					_issuetree_0[_unique_id] = _issuetree_0[_unique_id + 1]  # making sure to reset the issue tree
-					_policytree_0 = copy.deepcopy(agent.policytree)
-					_policytree_0[_unique_id] = _policytree_0[_unique_id + 1]  # making sure to reset the policy tree
-					obtained = False
-					print(len(_policytree_0))
+# 				# obtaining the issue tree for thepolicy entrepreneur
+# 				if isinstance(agent, ActiveAgent) and agent.affiliation == 1 and obtained == True:
+# 					_unique_id = copy.deepcopy(agent.unique_id)
+# 					_issuetree_0 = copy.deepcopy(agent.issuetree)
+# 					_issuetree_0[_unique_id] = _issuetree_0[_unique_id + 1]  # making sure to reset the issue tree
+# 					_policytree_0 = copy.deepcopy(agent.policytree)
+# 					_policytree_0[_unique_id] = _policytree_0[_unique_id + 1]  # making sure to reset the policy tree
+# 					obtained = False
+# 					print(len(_policytree_0))
 
-			# adding two PEs to affiliation 0
-			x = 55
-			y = 55
-			unique_id = agent_number
-			for add_PEs in range(2):					
-				agent_type = 'policyentrepreneur'
-				affiliation = 1
-				resources = 0  # not important for this model
-				issuetree = copy.deepcopy(_issuetree_0)
-				# introducing the issues
-				for issue in range(7): # seven is hardcoded here - caural relations replacement
-					# changing the goals to the goals of the new affiliation
-					# goal_profiles_Af[affiliation][issue + 1]
-					issuetree[unique_id][issue][1] = goal_profiles_Af[affiliation][issue + 1]
-				for CR in range(10): # ten is hardcoded here - issues replacement
-					# goal_profiles_Af[affiliation][issue + 1]
-					issuetree[unique_id][7 + CR][0] = goal_profiles_Af[affiliation][7 + CR + 1]
+# 			# adding two PEs to affiliation 0
+# 			x = 55
+# 			y = 55
+# 			unique_id = agent_number
+# 			for add_PEs in range(2):					
+# 				agent_type = 'policyentrepreneur'
+# 				affiliation = 1
+# 				resources = 0  # not important for this model
+# 				issuetree = copy.deepcopy(_issuetree_0)
+# 				# introducing the issues
+# 				for issue in range(7): # seven is hardcoded here - caural relations replacement
+# 					# changing the goals to the goals of the new affiliation
+# 					# goal_profiles_Af[affiliation][issue + 1]
+# 					issuetree[unique_id][issue][1] = goal_profiles_Af[affiliation][issue + 1]
+# 				for CR in range(10): # ten is hardcoded here - issues replacement
+# 					# goal_profiles_Af[affiliation][issue + 1]
+# 					issuetree[unique_id][7 + CR][0] = goal_profiles_Af[affiliation][7 + CR + 1]
 
-				policytree = copy.deepcopy(_policytree_0)
+# 				policytree = copy.deepcopy(_policytree_0)
 
-				agent = ActiveAgent((x, y), unique_id, model_run_PE, agent_type, resources, affiliation, issuetree, policytree, 0, 0)
-				# agent.preference_update(agent, unique_id)  # updating the issue tree preferences
-				model_run_PE.preference_update_DC(agent, unique_id)
-				model_run_PE.preference_update_PC(agent, unique_id)
-				model_run_PE.preference_update_S(agent, unique_id)
-				model_run_PE.grid.position_agent(agent, (x, y))
-				model_run_PE.schedule.add(agent)
+# 				agent = ActiveAgent((x, y), unique_id, model_run_PE, agent_type, resources, affiliation, issuetree, policytree, 0, 0)
+# 				# agent.preference_update(agent, unique_id)  # updating the issue tree preferences
+# 				model_run_PE.preference_update_DC(agent, unique_id)
+# 				model_run_PE.preference_update_PC(agent, unique_id)
+# 				model_run_PE.preference_update_S(agent, unique_id)
+# 				model_run_PE.grid.position_agent(agent, (x, y))
+# 				model_run_PE.schedule.add(agent)
 
-				# update of the standard inputs
-				y += 1
-				unique_id += 1
+# 				# update of the standard inputs
+# 				y += 1
+# 				unique_id += 1
 
-		if i == simulation_midpoint and sce_i == 2:
-			'''
-			Scenario 2 - Changes
-			- One PM from affiliation 0 to 1 with corresponding goal changes
-			'''
+# 		if i == simulation_midpoint and sce_i == 2:
+# 			'''
+# 			Scenario 2 - Changes
+# 			- One PM from affiliation 0 to 1 with corresponding goal changes
+# 			'''
 
-			change = True
-			for agent in model_run_PE.schedule.agent_buffer(shuffled=False):
-				# changing the policy maker
-				if isinstance(agent, ActiveAgent) and agent.agent_type == 'policymaker' and agent.affiliation == 0 and change == True:
-					_unique_id = agent.unique_id
+# 			change = True
+# 			for agent in model_run_PE.schedule.agent_buffer(shuffled=False):
+# 				# changing the policy maker
+# 				if isinstance(agent, ActiveAgent) and agent.agent_type == 'policymaker' and agent.affiliation == 0 and change == True:
+# 					_unique_id = agent.unique_id
 					
-					agent.affiliation = 1
-					for issue in range(7): # seven is hardcoded here - issue goals replacement
-						# changing the goals to the goals of the new affiliation
-						# goal_profiles_Af[affiliation][issue + 1]
-						agent.issuetree[_unique_id][issue][1] = goal_profiles_Af[1][issue + 1]
-					change = False  # stop the for loop once one agent has been changed
+# 					agent.affiliation = 1
+# 					for issue in range(7): # seven is hardcoded here - issue goals replacement
+# 						# changing the goals to the goals of the new affiliation
+# 						# goal_profiles_Af[affiliation][issue + 1]
+# 						agent.issuetree[_unique_id][issue][1] = goal_profiles_Af[1][issue + 1]
+# 					change = False  # stop the for loop once one agent has been changed
 
-		if i == simulation_midpoint and exp_i == 2:
-			'''
-			Exeperiment 2 - Changes:
-			- Reverse the causal relations of agents with affiliation 1
-			'''
+# 		if i == simulation_midpoint and exp_i == 2:
+# 			'''
+# 			Exeperiment 2 - Changes:
+# 			- Reverse the causal relations of agents with affiliation 1
+# 			'''
 
-			for agent in model_run_PE.schedule.agent_buffer(shuffled=False):
-				# changing the causal relations of the agent with affiliation 1
-				if isinstance(agent, ActiveAgent) and agent.affiliation == 1:
-					_unique_id = agent.unique_id
-					for CR in range(10): # ten is hardcoded here - issues replacement
-						# goal_profiles_Af[affiliation][issue + 1]
-						agent.issuetree[_unique_id][7 + CR][0] = goal_profiles_Af[1][7 + CR + 1]
+# 			for agent in model_run_PE.schedule.agent_buffer(shuffled=False):
+# 				# changing the causal relations of the agent with affiliation 1
+# 				if isinstance(agent, ActiveAgent) and agent.affiliation == 1:
+# 					_unique_id = agent.unique_id
+# 					for CR in range(10): # ten is hardcoded here - issues replacement
+# 						# goal_profiles_Af[affiliation][issue + 1]
+# 						agent.issuetree[_unique_id][7 + CR][0] = goal_profiles_Af[1][7 + CR + 1]
 
 # scenarios for the different runs (policy emergence model) - initial settings
 def scenario_PE_start():
@@ -282,20 +282,18 @@ def scenario_Sch():
 
 	simulation_midpoint = 15
 
-	if SM_version == 2:
+	if i != simulation_midpoint:
+		scenario_input = [None, None, None, None, None]
+		return scenario_input
 
-		if i != simulation_midpoint:
-			scenario_input = [None, None, None, None, None]
-			return scenario_input
-
-		if i == simulation_midpoint:
-			happyCheckRadius = None
-			movementQuota = 0.70
-			last_move_quota = 1
-			homophilyType0 = 0.65
-			homophilyType1 = 0.50
-			scenario_input = [happyCheckRadius, movementQuota, last_move_quota, homophilyType0, homophilyType1]
-			return scenario_input
+	if i == simulation_midpoint:
+		happyCheckRadius = None
+		movementQuota = 0.70
+		last_move_quota = 1
+		homophilyType0 = 0.65
+		homophilyType1 = 0.50
+		scenario_input = [happyCheckRadius, movementQuota, last_move_quota, homophilyType0, homophilyType1]
+		return scenario_input
 
 
 	# # checker code

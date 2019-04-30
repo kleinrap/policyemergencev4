@@ -15,13 +15,13 @@ The architecture present here is to be used for performing experiments. A batch 
 '''
 
 # batch run parameters
-repetitions_runs = 50
+repetitions_runs = 5
 
 # running parameters
 total_ticks = 155
 interval_tick = 5
 run_tick = int(total_ticks/interval_tick)
-warmup_tick = interval_tick
+warmup_tick = 60
 
 # parameters of the Schelling model
 sch_height = 20  # height of the grid - this value must be a multiple of 4
@@ -85,10 +85,10 @@ for i in range(len(resources_aff)*2):
 goal_profiles = [goal_profiles_Ex1, goal_profiles_Ex2, goal_profiles_Ex3Be, goal_profiles_Ex3Af, goal_profiles_Ex4Be, goal_profiles_Ex4Af]
 
 # running a number of experiments
-for exp_i in range(4):
+for exp_i in range(1):
 
 	# running a number of scenarios
-	for sce_i in range (3):
+	for sce_i in range (1):
 
 		# creating the agents for the policy emergence model
 		SM_inputs = [SM_PMs, SM_PMs_aff, SM_PEs, SM_PEs_aff, SM_EPs, SM_EPs_aff, resources_aff, representativeness, goal_profiles[exp_i]]
@@ -107,18 +107,18 @@ for exp_i in range(4):
 				print("\n")
 				print("************************")
 				print("Start of the simulation:", "\n")
+
+				# warm up time
+				print('Warmup')
+				policy_chosen = [None for ite in range(len(model_run_SM.policy_instruments[0]))]
+				for y in range(warmup_tick):
+					IssueInit, type0agents, type1agents = model_run_schelling.step(policy_chosen)
+
 				for i in range(run_tick):
 
 					print(" ")
 					print("************************")
 					print("Tick number: ", i, ', run:', rep_runs, ', experiment:', exp_i, ', scenario:', sce_i)
-
-					# warm up time
-					# this is also used as a warmup time
-					if i == 0:
-						policy_chosen = [None for ite in range(len(model_run_SM.policy_instruments[0]))]
-						for warmup_time in range(warmup_tick):
-							IssueInit, type0agents, type1agents = model_run_schelling.step(policy_chosen)
 
 					# policy impact evaluation
 					policy_impact_evaluation(model_run_SM, model_run_schelling, IssueInit, interval_tick)
