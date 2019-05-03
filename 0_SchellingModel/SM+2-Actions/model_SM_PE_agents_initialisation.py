@@ -59,6 +59,7 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 	PE_EPs_aff = PE_inputs[5]  # external parties distribution per affiliation
 	resources_aff = PE_inputs[6]  # resources per affiliation agent out of 100
 	goal_profiles = PE_inputs[8]  # goal profiles for active agents and electorate
+	init_randomness = PE_inputs[10]
 
 	aff_number = len(resources_aff)
 	if aff_number!= len(PE_PMs_aff) or aff_number != len(PE_PEs_aff) or aff_number != len(PE_EPs_aff):
@@ -120,10 +121,10 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 			issuetree = copy.deepcopy(issuetree0)
 			# introducing the issues
 			for k in range(len_DC + len_PC + len_S):
-				issuetree[unique_id][k] = [0, round(goal_profiles[i][k+1] + (random.random()/100),4), 0]
+				issuetree[unique_id][k] = [0, round(goal_profiles[i][k+1] + (random.random()/init_randomness),4), 0]
 			# introduction of the causal relations
 			for k in range(len_DC*len_PC + len_PC * len_S):
-				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = round(goal_profiles[i][len_DC + len_PC + len_S + k+1] + (random.random()/100), 4)
+				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = round(goal_profiles[i][len_DC + len_PC + len_S + k+1] + (random.random()/init_randomness), 4)
 			policytree = copy.deepcopy(policytree0)
 			conflictLevelIssue = copy.deepcopy(conflictLevelIssue0)
 			conflictLevelPolicy = copy.deepcopy(conflictLevelPolicy0)
@@ -148,10 +149,10 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 			issuetree = copy.deepcopy(issuetree0)
 			# introducing the issues
 			for k in range(len_DC + len_PC + len_S):
-				issuetree[unique_id][k] = [0, round(goal_profiles[i][k+1] + (random.random()/100),4), 0]
+				issuetree[unique_id][k] = [0, round(goal_profiles[i][k+1] + (random.random()/init_randomness),4), 0]
 			# introduction of the causal relations
 			for k in range(len_DC*len_PC + len_PC * len_S):
-				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = round(goal_profiles[i][len_DC + len_PC + len_S + k+1] + (random.random()/100), 4)
+				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = round(goal_profiles[i][len_DC + len_PC + len_S + k+1] + (random.random()/init_randomness), 4)
 			policytree = copy.deepcopy(policytree0)
 			conflictLevelIssue = copy.deepcopy(conflictLevelIssue0)
 			conflictLevelPolicy = copy.deepcopy(conflictLevelPolicy0)
@@ -177,10 +178,10 @@ def init_active_agents(self, len_S, len_PC, len_DC, len_CR, len_PF, len_ins_1, l
 			issuetree = copy.deepcopy(issuetree0)
 			# introducing the issues
 			for k in range(len_DC + len_PC + len_S):
-				issuetree[unique_id][k] = [0, round(goal_profiles[i][k+1] + (random.random()/100), 4), 0]
+				issuetree[unique_id][k] = [0, round(goal_profiles[i][k+1] + (random.random()/init_randomness), 4), 0]
 			# introduction of the causal relations
 			for k in range(len_DC*len_PC + len_PC * len_S):
-				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = round(goal_profiles[i][len_DC + len_PC + len_S + k+1] + (random.random()/100), 4)
+				issuetree[unique_id][len_DC + len_PC + len_S + k][0] = round(goal_profiles[i][len_DC + len_PC + len_S + k+1] + (random.random()/init_randomness), 4)
 			policytree = copy.deepcopy(policytree0)
 			conflictLevelIssue = copy.deepcopy(conflictLevelIssue0)
 			conflictLevelPolicy = copy.deepcopy(conflictLevelPolicy0)
@@ -213,6 +214,7 @@ def init_electorate_agents(self, len_S, len_PC, len_DC, PE_inputs):
 	aff_number = len(PE_inputs[6])
 	representativeness_aff = PE_inputs[7]
 	goal_profiles = PE_inputs[8]
+	init_randomness = PE_inputs[10]
 
 	# creation of the agents
 	# electorate 1
@@ -224,7 +226,7 @@ def init_electorate_agents(self, len_S, len_PC, len_DC, PE_inputs):
 	issuetree = copy.deepcopy(issuetree0)
 	# issue goals
 	for i in range(len_DC + len_PC + len_S):
-		issuetree[i] = round(goal_profiles[aff_number][i+1] + (random.random()/100), 4)
+		issuetree[i] = round(goal_profiles[aff_number][i+1] + (random.random()/init_randomness), 4)
 	agent = ElectorateAgent((x, y), unique_id, self, affiliation, issuetree, representativeness)
 	self.grid.position_agent(agent, (x, y))
 	self.schedule.add(agent)
@@ -238,7 +240,7 @@ def init_electorate_agents(self, len_S, len_PC, len_DC, PE_inputs):
 	issuetree = copy.deepcopy(issuetree0)
 	# issue goals
 	for i in range(len_DC + len_PC + len_S):
-		issuetree[i] = round(goal_profiles[aff_number+1][i+1] + (random.random()/100), 4)
+		issuetree[i] = round(goal_profiles[aff_number+1][i+1] + (random.random()/init_randomness), 4)
 	agent = ElectorateAgent((x, y), unique_id, self, affiliation, issuetree, representativeness)
 	self.grid.position_agent(agent, (x, y))
 	self.schedule.add(agent)
@@ -252,7 +254,7 @@ def init_electorate_agents(self, len_S, len_PC, len_DC, PE_inputs):
 		issuetree = copy.deepcopy(issuetree0)
 		# issue goals
 		for i in range(len_DC + len_PC + len_S):
-			issuetree[i] = round(goal_profiles[aff_number+2][i+1] + (random.random()/100), 4)
+			issuetree[i] = round(goal_profiles[aff_number+2][i+1] + (random.random()/init_randomness), 4)
 		agent = ElectorateAgent((x, y), unique_id, self, affiliation, issuetree, representativeness)
 		self.grid.position_agent(agent, (x, y))
 		self.schedule.add(agent)

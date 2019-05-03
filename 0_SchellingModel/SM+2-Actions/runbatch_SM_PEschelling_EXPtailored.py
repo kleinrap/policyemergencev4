@@ -3,7 +3,7 @@ from model_SM_PE import PolicyEmergenceSM
 import matplotlib.pyplot as plt
 import copy
 import pandas as pd
-import os
+import time
 
 from model_SM_PE_policyImpact import policy_impact_evaluation
 from model_module_interface import issue_mapping
@@ -45,10 +45,10 @@ sch_last_move_quota = 5  # initial last moment quota
 
 ''' parameters of the policy emergence model '''
 # SM+0 parameters
-PE_PMs = 3  # number of policy makers
-PE_PMs_aff = [2, 1]  # policy maker distribution per affiliation
-PE_PEs = 4  # number of policy entrepreneurs
-PE_PEs_aff = [2, 2]  # policy entrepreneur distribution per affiliation
+PE_PMs = 4  # number of policy makers
+PE_PMs_aff = [2, 2]  # policy maker distribution per affiliation
+PE_PEs = 8  # number of policy entrepreneurs
+PE_PEs_aff = [4, 4]  # policy entrepreneur distribution per affiliation
 PE_EPs = 2  # number of external parties
 PE_EPs_aff = [1, 1]  # external parties distribution per affiliation
 resources_aff = [0.75, 0.75]  # resources per affiliation agent out of 1
@@ -62,6 +62,7 @@ weightAction = 1  # used to calibrate the policy learning speed ... numbers abov
 weightResources = 1/5  # helps define the number of actions the agents can make per step
 weightBonusPM = 1.05  # bonus when policy makers are targeted in the PF step
 action_param = [weightAction, weightResources, weightBonusPM]
+init_randomness = 25 # initial randomness of the goals of the agents
 # scenario_input = [None, None, None, None, None] # setting for the Schelling scenarios by default
 
 # scenarios for the different runs (policy emergence model) - mid point changes
@@ -312,10 +313,12 @@ for exp_i in range(exp_number):
 		resources_aff, goal_profiles_Be, goal_profiles_Af = scenario_PE_start()
 
 		# creating the agents for the policy emergence model
-		PE_inputs = [PE_PMs, PE_PMs_aff, PE_PEs, PE_PEs_aff, PE_EPs, PE_EPs_aff, resources_aff, representativeness, goal_profiles_Be, conflictLevel_coefficient]
+		PE_inputs = [PE_PMs, PE_PMs_aff, PE_PEs, PE_PEs_aff, PE_EPs, PE_EPs_aff, resources_aff, representativeness, goal_profiles_Be, conflictLevel_coefficient, init_randomness]
 
 		# running a number of repetitions per experiment
 		for rep_runs in range(repetitions_runs):
+
+			start = time.time()
 
 			# for tests and part runs
 			if sce_i >= 0:
@@ -378,3 +381,6 @@ for exp_i in range(exp_number):
 				output_PE_agents = model_run_PE.datacollector.get_agent_vars_dataframe()
 				output_PE_agents.to_csv('O_SM' + str(SM_version) + '_PE_agents_Exp' + str(exp_i) + '_Sce' + str(sce_i) + '_Run' + str(rep_runs) + '.csv')
 
+			end = time.time()
+
+			print('Simulation time:', end-start)

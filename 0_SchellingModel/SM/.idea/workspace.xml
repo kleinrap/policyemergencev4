@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="13e6de78-491f-43e4-991f-faea517ddeda" name="Default Changelist" comment="Change of warmup">
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_SM_agents_0_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_SM_agents_0_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_SM_agents_0_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_SM_agents_0_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_SM_model_0_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_SM_model_0_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_SM_model_0_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_SM_model_0_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_Sch_model_0_0.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_Sch_model_0_1.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_Sch_model_0_2.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/O_Sch_model_0_3.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/PolicyEmergence_analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/Schelling_analysis.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_4Models_belieftree_3EPs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_4Models_belieftree_3PEs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_4Models_belieftree_3PMs.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_4Models_belieftree_electorate.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_coalitions.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_links.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_model_all.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_teams.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/input_goalProfiles_Ex4Af" beforeDir="false" afterPath="$PROJECT_DIR$/input_goalProfiles_Ex4Af" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/runbatch_SM_schelling_EXPtailored.py" beforeDir="false" afterPath="$PROJECT_DIR$/runbatch_SM_schelling_EXPtailored.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SchellingAlone/runbatch_SchellingAlone.py" beforeDir="false" afterPath="$PROJECT_DIR$/../SchellingAlone/runbatch_SchellingAlone.py" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/runbatch_SM_schelling_EXPtailored.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="351">
+              <caret line="92" column="39" selection-start-line="92" selection-start-column="39" selection-end-line="92" selection-end-column="39" />
+              <folding>
+                <element signature="e#0#37#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/model_schelling.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="390">
+              <caret line="29" column="46" selection-start-line="29" selection-start-column="46" selection-end-line="29" selection-end-column="46" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>warmup_tick</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/input_goalProfiles_Ex4Af" />
+        <option value="$PROJECT_DIR$/runbatch_SM_schelling_EXPtailored.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" fullScreen="true">
+    <option name="width" value="1920" />
+    <option name="height" value="1200" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="SM" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SM" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="runbatch_SM_schelling_EXPtailored" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="SM" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="/usr/local/bin/python3.7" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/runbatch_SM_schelling_EXPtailored.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="13e6de78-491f-43e4-991f-faea517ddeda" name="Default Changelist" comment="" />
+      <created>1556598323562</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1556598323562</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Change of warmup">
+      <created>1556600636831</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1556600636832</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24960506" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32920355" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.32920355" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="8" visible="true" weight="0.29911503" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Change of warmup" />
+    <option name="LAST_COMMIT_MESSAGE" value="Change of warmup" />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/input_goalProfiles_Ex4Af">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="36" selection-start-line="2" selection-start-column="36" selection-end-line="2" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/input_goalProfiles_Ex4Be">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" selection-start-line="1" selection-end-line="2" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/runbatch_SM_schelling_EXPtailored.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="92" column="39" selection-start-line="92" selection-start-column="39" selection-end-line="92" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#37#0" expanded="true" />
+            <element signature="e#5385#14922#0" />
+            <element signature="e#13336#13922#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model_schelling.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="29" column="46" selection-start-line="29" selection-start-column="46" selection-end-line="29" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

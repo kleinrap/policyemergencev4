@@ -1,0 +1,33 @@
+INPUTS for the simulation
+
+
+**
+Segregation model general inputs
+
+warmup time: 60 ticks
+
+height of the grid: 20
+width of the grid: 20
+density of agents on the grid: 0.8 (%)
+minority agent proportion: 0.4 (%)
+homophily type 0: 0.7 (%)
+homophily type 1: 0.5 (%)
+movement quota (total amount of agents allowed to move per tick): 0.30 (%)
+happiness check radius: 5
+movement check radius: 10
+last movement quota (amount of ticks before can move again): 5
+
+**
+Policy emergence model general inputs
+
+Not run here
+
+**
+Experiments
+
+Just the segregation model alone
+
+**
+Scenarios
+
+Just the segregation model alone
