@@ -2,33 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="73f65827-c4d5-4c2e-b448-8519bc8fd1ff" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/model_SM_PE_agents_initialisation.py" beforeDir="false" afterPath="$PROJECT_DIR$/model_SM_PE_agents_initialisation.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/runbatch_SM_PEschelling_EXPtailored.py" beforeDir="false" afterPath="$PROJECT_DIR$/runbatch_SM_PEschelling_EXPtailored.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_SM_agents_0_0.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_SM_agents_0_1.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_SM_agents_0_2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_SM_agents_0_3.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_SM_model_0_0.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_SM_model_0_1.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_SM_model_0_2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_SM_model_0_3.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_Sch_model_0_0.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_Sch_model_0_1.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_Sch_model_0_2.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/O_Sch_model_0_3.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/PolicyEmergence_analysis.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/Schelling_analysis.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_4Models_belieftree_3EPs.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_4Models_belieftree_3PEs.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_4Models_belieftree_3PMs.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_4Models_belieftree_electorate.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_coalitions.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_links.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_model_all.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/0_ResultsAnalysis/oldReaderFiles/0_data_analysis_teams.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/input_goalProfiles_Ex4Af" beforeDir="false" afterPath="$PROJECT_DIR$/../SM/input_goalProfiles_Ex4Af" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SM/runbatch_SM_schelling_EXPtailored.py" beforeDir="false" afterPath="$PROJECT_DIR$/../SM/runbatch_SM_schelling_EXPtailored.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../SchellingAlone/runbatch_SchellingAlone.py" beforeDir="false" afterPath="$PROJECT_DIR$/../SchellingAlone/runbatch_SchellingAlone.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -37,15 +12,14 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/runbatch_SM_PEschelling_EXPtailored.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="467">
-              <caret line="52" column="68" lean-forward="true" selection-start-line="52" selection-start-column="68" selection-end-line="52" selection-end-column="68" />
+            <state relative-caret-position="-708">
+              <caret line="19" column="14" selection-start-line="19" selection-start-column="14" selection-end-line="19" selection-end-column="14" />
               <folding>
                 <element signature="e#0#40#0" expanded="true" />
-                <element signature="e#13526#16409#0" />
               </folding>
             </state>
           </provider>
@@ -54,7 +28,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/model_SM_PE_agents_initialisation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="227">
+            <state relative-caret-position="855">
               <caret line="61" column="19" selection-start-line="61" selection-start-column="4" selection-end-line="61" selection-end-column="19" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
@@ -71,6 +45,9 @@
       <find>/100</find>
       <find>PE_inputs</find>
       <find>init_randomness</find>
+      <find>scenario_PE_mid</find>
+      <find>scenario_PE_start</find>
+      <find>scenario_Sch</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -121,6 +98,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RunDashboard">
@@ -173,45 +151,43 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1200" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info id="Favorites" side_tool="true" />
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24960506" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Version Control" />
-      <window_info anchor="bottom" id="Python Console" weight="0.32920355" />
-      <window_info anchor="bottom" id="Terminal" />
-      <window_info anchor="bottom" id="Event Log" side_tool="true" />
+      <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32920355" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32920355" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" />
+      <window_info anchor="bottom" id="Event Log" order="9" side_tool="true" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32920355" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/model_SM_PE_agents_initialisation.py">
+    <entry file="file://$PROJECT_DIR$/runbatch_SM_PEschelling_EXPtailored.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="227">
-          <caret line="61" column="19" selection-start-line="61" selection-start-column="4" selection-end-line="61" selection-end-column="19" />
+        <state relative-caret-position="-708">
+          <caret line="19" column="14" selection-start-line="19" selection-start-column="14" selection-end-line="19" selection-end-column="14" />
           <folding>
-            <element signature="e#0#13#0" expanded="true" />
+            <element signature="e#0#40#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/runbatch_SM_PEschelling_EXPtailored.py">
+    <entry file="file://$PROJECT_DIR$/model_SM_PE_agents_initialisation.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="467">
-          <caret line="52" column="68" lean-forward="true" selection-start-line="52" selection-start-column="68" selection-end-line="52" selection-end-column="68" />
+        <state relative-caret-position="855">
+          <caret line="61" column="19" selection-start-line="61" selection-start-column="4" selection-end-line="61" selection-end-column="19" />
           <folding>
-            <element signature="e#0#40#0" expanded="true" />
-            <element signature="e#13526#16409#0" />
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
