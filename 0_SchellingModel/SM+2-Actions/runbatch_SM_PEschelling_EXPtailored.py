@@ -51,7 +51,6 @@ PE_PEs = 8  # number of policy entrepreneurs
 PE_PEs_aff = [4, 4]  # policy entrepreneur distribution per affiliation
 PE_EPs = 2  # number of external parties
 PE_EPs_aff = [1, 1]  # external parties distribution per affiliation
-resources_aff = [0.25, 1.00]  # resources per affiliation agent out of 1
 representativeness = [25, 75]  # electorate representativeness per affiliation
 # goal_profiles_Be, goal_profiles_Af = goal_profiles(resources_aff, SM_version)  # getting the goal profiles
 
@@ -167,7 +166,7 @@ for exp_i in range(exp_number):
 
 			start = time.time()
 
-			# for tests and part runs
+			# statement used to compartmentalise runs
 			if sce_i >= 0:
 
 				# initialisation of the Schelling model
@@ -183,7 +182,10 @@ for exp_i in range(exp_number):
 
 					print(" ")
 					print("************************")
-					print("Tick number: ", i, ', experiment:', exp_i, ', scenario:', sce_i)
+					print("Tick number: ", i, ', Run:', rep_runs,'experiment:', exp_i, ', scenario:', sce_i)
+
+					# running the different scenarios
+					scenario_PE_mid()
 
 					# warm up time
 					# this is also used as a warmup time
@@ -211,9 +213,6 @@ for exp_i in range(exp_number):
 						KPIs, type0agents, type1agents = model_run_schelling.step(policy_chosen, scenario_input)
 						scenario_input = [None, None, None, None, None] # reset the scenario input
 						policy_chosen = [None for ite in range(len(model_run_PE.policy_instruments[0]))] # reset policy after it has been implemented once
-
-					# running the different scenarios
-					scenario_PE_mid()
 
 				# output of the data
 				# Schelling model
