@@ -200,12 +200,14 @@ class PolicyEmergenceSM(Model):
 					agent.issuetree_truth[issue] = KPIs[issue]
 				truth_issuetree = agent.issuetree_truth
 
-		# replacing the issue beliefs from the KPIs
-		if SM_version < 2 or self.stepCount == 0:  # outright replacing the beliefs
+		# SM+0/1 - replacing the issue beliefs from the KPIs
+		if SM_version < 2 or self.stepCount == 0:
 			for agent in self.schedule.agent_buffer(shuffled=True):
 				if isinstance(agent, ActiveAgent):
 					for issue in range(self.len_DC+self.len_PC+self.len_S):
 						agent.issuetree[agent.unique_id][issue][0] = truth_issuetree[issue]
+
+		# SM+2 - replacing the issue beliefs from the KPIs
 		if SM_version >= 2:  # paced update of the beliefs
 			for agent in self.schedule.agent_buffer(shuffled=True):
 				if isinstance(agent, ActiveAgent):
@@ -224,7 +226,9 @@ class PolicyEmergenceSM(Model):
 					# replacing the policy instruments impacts
 					for insj in range(self.len_ins_1 + self.len_ins_2 + self.len_ins_all):
 						agent.policytree[agent.unique_id][1][insj][0:self.len_S] = truth_policytree[self.len_PC+insj]
-		if SM_version >= 2:  # paced update of the beliefs
+
+		# SM+2 - paced update of the beliefs
+		if SM_version >= 2:
 			for agent in self.schedule.agent_buffer(shuffled=True):
 				if isinstance(agent, ActiveAgent):
 					# replacing the policy family likelihoods
@@ -242,7 +246,7 @@ class PolicyEmergenceSM(Model):
 			if isinstance(agent, ActiveAgent):
 				agent.preference_update(agent, agent.unique_id)
 
-		# updating conflict levels
+		# SM+2 - updating conflict levels
 		if SM_version >= 2:
 			for agent in self.schedule.agent_buffer(shuffled=False):
 				for who in self.schedule.agent_buffer(shuffled=False):
