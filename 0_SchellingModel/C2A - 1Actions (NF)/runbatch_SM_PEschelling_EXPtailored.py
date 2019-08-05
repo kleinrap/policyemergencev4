@@ -15,6 +15,8 @@ from runbatch_goalProfiles import goal_profiles
 The architecture present here is to be used for performing experiments. A batch runner algorithm will be used such that a set of experiments can be run at the same time.
 '''
 
+# todo The PC and S all change at the same rate ... this is an oversight. Changes in the beliefs should be different depending on the tiers being considered.
+
 ''' model version '''
 # 0 - SM, 1 - SM+1 electorate, 2 - SM+2 actions, 3 - SM+3 networks, 4 - SM+4 bounded, 5 - SM+5 coalitions
 SM_version = 2

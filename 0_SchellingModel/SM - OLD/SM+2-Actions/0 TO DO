@@ -1,0 +1,29 @@
+TO DO LIST
+
+--- SM+2 actions ---------------
+
+1. Making agents either policy or issue driven
+	- Include a preference in the policy families and the policy instruments (done)
+
+2. Conflict level introduction (done)
+
+3. Pre-actions infrastructure:
+	- Introduce new preference calculation (done)
+	- Introduce issue and policy drive agents (done)
+	- Add new belief updates (SM+2+ only)
+	- Add new impact updated (SM+2+ only)
+
+2. Actions introduction
+	- Likelihood of performing an action (done)
+	- Implementation of the action (done)
+	- Add the weighted bonus for the PF for PM targeting (done)
+
+X. Checks:
+	- 
+
+Regarding the policy instruments:
+	- 
+
+Notes:
+- Currently, because the goal profiles are too similar, the agents all have the same conflict levels. In turn, this means that the actions they are performing are effectively random.
+- Look into the fact that most agents are always issue driven (especially in the policy formulation) because they have more 
